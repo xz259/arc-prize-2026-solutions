@@ -1,7 +1,7 @@
 """Figure 1 of the ARC-3 write-up: estimated validation score at each adopted configuration (rewritten 2026-11-12).
 
-Source: inference_stack/experiments/score_extracts_20261028 (RUN_INDEX.tsv). Comparable runs only (about 4.9 min per game).
-Estimated score on the 55 core games = (25 x public-25 official + 30 x copycat-30 estimate) / 55, as in the README.
+Source: RUN_INDEX.tsv beside this script. Comparable runs only (about 4.9 min per game).
+Estimated score on the 55 core games = (25 x public-25 official + 30 x copycat-30 estimate) / 55, as in README.md.
 Each point is the mean of all comparable runs of one stage; the thin bar spans their minimum and maximum.
 Runs at other context lengths (p76 70K arm, p77 89K / 98K, k78 92K arm) and the rejected requant arm plf1b06 are left out. Exploratory runs of 10-21 to 10-23 (context search, precision tests, throttled host) and the broken kag71 / stopped ctx78 runs
 are not stages and are omitted; the text reports the 61K vs 71K pair separately.
