@@ -12,6 +12,20 @@
    "by": "Claude main session 099768dc (the user 10-27: no throughput-costing diagnostic in the Kaggle run)",
    "change": "env.server_serve VLLM_COMPUTE_NANS_IN_LOGITS 1 -> 0 (every mode: vLLM hashes it into the compile key, so a competition-only change would miss the compile cache)",
    "previous_md5": "d387e3b15b4aa91f56fd94e28faddc33"
+  },
+  {
+   "at": "2026-10-31T01:05:56Z",
+   "by": "Claude session 69c06084 (mk_kdef_v15.py)",
+   "change": "knob ARC3_DENSE_FP8_TIER <- FP8 (off in 82kr1632, 80kr512, 82kx1280); profiles 82kx1280a28 (need 813 pages, KVG 18.99, GRAPH 150, LANE_TOKS 54)",
+   "previous_md5": "c66c4a3f50e3f40867672b486c56ad40",
+   "why": "ARC2 - main FP8_DENSE_AIN_REPORT_2026-10-30.md: A_in saves 1.92 GB at TP=1 for about +0.0005 NLL; the lanes buy throughput"
+  },
+  {
+   "at": "2026-10-31T03:41:56Z",
+   "by": "Claude session 69c06084 (mk_kdef_v16.py)",
+   "change": "profile 82kx1632a30p16 (need 871 pages, KVG 20.34, GRAPH 160, LANE_TOKS 53, ring 1632, eprune)",
+   "previous_md5": "b9073b281a7a41b9112366777da19fa7",
+   "why": "the user 10-31: A_in + prune16 for a public-LB experiment, both KL costs accepted"
   }
  ],
  "builder": "mk_kdef.py (Claude main session 099768dc)",
@@ -732,7 +746,8 @@
    "ARC3_S2_KVRING_N": "KVRING",
    "ARC3_S2_KVRING_FAST": "KVFAST",
    "ARC3_S2_GDN_STATE": "GDNS",
-   "ARC3_S2_KVRING_EXACT": "KVEXACT"
+   "ARC3_S2_KVRING_EXACT": "KVEXACT",
+   "ARC3_DENSE_FP8_TIER": "FP8"
   }
  },
  "label_token": "@LABEL@",
@@ -758,7 +773,8 @@
    "KVRING": 1632,
    "GDNS": "scaled16sr",
    "KVFAST": 1,
-   "KVEXACT": 0
+   "KVEXACT": 0,
+   "FP8": "off"
   },
   "80kr512": {
    "AGECAP": 120000,
@@ -781,7 +797,8 @@
    "KVRING": 512,
    "GDNS": "scaled16sr",
    "KVFAST": 1,
-   "KVEXACT": 0
+   "KVEXACT": 0,
+   "FP8": "off"
   },
   "82kx1280": {
    "AGECAP": 120000,
@@ -804,10 +821,59 @@
    "KVRING": 1280,
    "GDNS": "scaled16sr",
    "KVFAST": 1,
-   "KVEXACT": 352
+   "KVEXACT": 352,
+   "FP8": "off"
+  },
+  "82kx1280a28": {
+   "AGECAP": 120000,
+   "BASIS": 66528,
+   "CAPL": "8,16,24,32,36,40,80,120,130,135,140,145,150",
+   "CTX": 82528,
+   "GRAPH": 150,
+   "K": 4,
+   "KEEP": 41264,
+   "KVG": "18.99",
+   "NL": 30,
+   "NP": 28,
+   "TAIL": 16000,
+   "KV": "lutc",
+   "STAGE2": "guards,rollback,wy,vsampler,ctxfree,topkshare,pleconv,persist,draftqsa,schedfast,mmstrip,overlap,deadlinefix,topkfix,embedhost,splitfix,b1inc,loadskip,marlindet,kvrot,resumefast,ckptfetch,drafthead,rebaseobs,rebase74,agestat,agecap,hollowgroup,sessmem,rope2m,ctxtail,promptmove,padbudget,poolpress,stallguard,kvring,prestage,fqfast,draftwin,draftring,agefix,sumpin,mmonly",
+   "PAGE": 3184,
+   "PRUNE": 0,
+   "LANE_TOKS": 54,
+   "TEST": "2026-10-31 (the user: try ARC-2's FP8 tier A_in on ARC-3): 82kx1280 with FP8 W8A16 on in_proj_qkvz + qkv_proj (48 layers; out projections, lm_head, drafter, PLE BF16) and 28+2 lanes; pod debffeab3351",
+   "KVRING": 1280,
+   "GDNS": "scaled16sr",
+   "KVFAST": 1,
+   "KVEXACT": 352,
+   "FP8": "A_in"
+  },
+  "82kx1632a30p16": {
+   "AGECAP": 120000,
+   "BASIS": 66528,
+   "CAPL": "8,16,24,32,36,40,80,120,130,135,140,145,150,155,160",
+   "CTX": 82528,
+   "GRAPH": 160,
+   "K": 4,
+   "KEEP": 41264,
+   "KVG": "20.34",
+   "NL": 32,
+   "NP": 30,
+   "TAIL": 16000,
+   "KV": "lutc",
+   "STAGE2": "guards,rollback,wy,vsampler,ctxfree,topkshare,pleconv,persist,draftqsa,schedfast,mmstrip,overlap,deadlinefix,topkfix,embedhost,splitfix,b1inc,loadskip,marlindet,kvrot,resumefast,ckptfetch,drafthead,rebaseobs,rebase74,agestat,agecap,hollowgroup,sessmem,rope2m,ctxtail,promptmove,padbudget,poolpress,stallguard,kvring,prestage,fqfast,draftwin,draftring,agefix,sumpin,mmonly,eprune",
+   "PAGE": 3184,
+   "PRUNE": 16,
+   "LANE_TOKS": 53,
+   "TEST": "2026-10-31 (the user: \"Add prune16 on top of this. We use 30+2 lanes and a longer ring\"): 82kx1280a28 (FP8 A_in) + expert pruning (bottom 16 per layer, ranked on public 25 + copycat 30 + additional 167) at 30+2 lanes with a 1632-row ring + the 352-slot exact set; pod debffeab3351",
+   "KVRING": 1632,
+   "GDNS": "scaled16sr",
+   "KVFAST": 1,
+   "KVEXACT": 352,
+   "FP8": "A_in"
   }
  },
- "profiles_note": "2026-10-28 (the user): v11 adds 82kx1280 (82kr1632 with ring 1,280 + the 352-slot exact set and the promptmove fix), opt-in; the default stays 82kr1632. Before: 2026-10-27 (the user): two configurations, 82kr1632 under test and 80kr512 the saved option; g4 KV and expert pruning retired (the v9 profiles 80k, 81kg4, 81kg4p16, 82kp16 removed). Before: 2026-10-25T11:04Z: the user 10-25 (\"80k and 92k. We don't need other ones\"): 80k unchanged; 92k = the lane test's 92k24 (check_k92.py)",
+ "profiles_note": "2026-10-31 (the user): v16 adds 82kx1632a30p16 (A_in + prune16, 30+2, a longer ring), opt-in. Before: 2026-10-31 (the user): v15 adds FP8 dense tier A_in profiles 82kx1280a28 (82kx1280 + A_in with more lanes), opt-in. Before: 2026-10-28 (the user): v11 adds 82kx1280 (82kr1632 with ring 1,280 + the 352-slot exact set and the promptmove fix), opt-in; the default stays 82kr1632. Before: 2026-10-27 (the user): two configurations, 82kr1632 under test and 80kr512 the saved option; g4 KV and expert pruning retired (the v9 profiles 80k, 81kg4, 81kg4p16, 82kp16 removed). Before: 2026-10-25T11:04Z: the user 10-25 (\"80k and 92k. We don't need other ones\"): 80k unchanged; 92k = the lane test's 92k24 (check_k92.py)",
  "server_argv_a": [
   "/workspace/arc3-inference/venv-runtime/bin/python",
   "-m",
@@ -951,6 +1017,50 @@
     "exact_pin": 64,
     "exact_rate": 0.02,
     "note": "ring slots 1,288 + 352 = 1,640 (as 82kr1632); exact state about 64 MiB more"
+   },
+   "82kx1280a28": {
+    "kv": "lutc",
+    "prune": 0,
+    "ctx": 82528,
+    "lanes": "28+2",
+    "kvg": "18.99",
+    "blocks": 813,
+    "need": 813,
+    "trim": 0,
+    "lane_toks": 54,
+    "slack": 256,
+    "ring": 1280,
+    "ring_mib": null,
+    "kv_equiv_gib": null,
+    "gdn": "scaled16sr",
+    "kvfast": 1,
+    "exact": 352,
+    "exact_pin": 64,
+    "exact_rate": 0.02,
+    "note": "82kx1280 + FP8 A_in, 28+2; blocks = need at 25072938 bytes per page",
+    "fp8": "A_in"
+   },
+   "82kx1632a30p16": {
+    "kv": "lutc",
+    "prune": 16,
+    "ctx": 82528,
+    "lanes": "30+2",
+    "kvg": "20.34",
+    "blocks": 871,
+    "need": 871,
+    "trim": 0,
+    "lane_toks": 53,
+    "slack": 256,
+    "ring": 1632,
+    "ring_mib": null,
+    "kv_equiv_gib": null,
+    "gdn": "scaled16sr",
+    "kvfast": 1,
+    "exact": 352,
+    "exact_pin": 64,
+    "exact_rate": 0.02,
+    "note": "82kx1280a28 + prune16 (222-game set), 30+2, ring 1632 + exact 352",
+    "fp8": "A_in"
    }
   },
   "dropped": [

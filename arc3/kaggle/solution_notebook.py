@@ -11,7 +11,25 @@ ring plus the 352-slot exact KV set and the promptmove rerope fix). The user (10
 82kr1632. Later on 10-28 (the user): the CKPTFETCH toggle (default on, as shipped) for the startup timing with the prefetch on and off.
 v12 (2026-10-28, Claude main session 099768dc), for arc3-code v12: the parallel weight read (the user: "add the parallel PLE read to the
 next build"): CKPTFETCH_FILES shards read at once, one stream each (Kaggle's v11b starts read the PLE shards one at a time, about 53 s
-per shard); TEARDOWN_MARGIN_S 150 (the user, 10-28; was 300)."""
+per shard); TEARDOWN_MARGIN_S 150 (the user, 10-28; was 300).
+v13 (2026-10-30, Claude session 69c06084), for arc3-code v13, a separate code package (the user: "Add the threaded PLE copy to a v13
+build. We will upload the code as a separate package", so the v12 package behind the submitted notebook stays): PLE_COPY_THREADS splits
+the PLE worker's row copy over threads so its page faults overlap (a competitor's Kaggle report: PLE shards 48.4 -> 7.0 s, ready at
+9-10 min instead of 23); the weights are identical. The settings are the submitted notebook's (arc3-solution.ipynb 1dc36caf, 10-29:
+82kx1280, fallback 82kr1632, shuffled with seed 0, CKPTFETCH_FILES 4); CODE_MODEL names the package.
+v14 (2026-10-30, Claude session 69c06084), for arc3-code v14, again a separate package (arc3-code-v14): v13's smoke loaded the PLE
+worker's shards in 399 s (median 19.1 s) but the server process's target shards in 734 s (median 36.3 s), healthy at 1,025 s, so
+SHARD_FAULT_THREADS gives the server process's shards (the target's and the drafter's) the same parallel page faults; the weights are
+identical. Also the FUSE guard (the user, 10-29) at the end of cell 2: on a FUSE input mount, ckptfetch is off.
+v15 (2026-10-31, Claude session 69c06084), for arc3-code v15, a separate package (arc3-code-v15): the user (10-30): try ARC2 - main's
+FP8 dense tier A_in on ARC-3 with the remaining submissions. PROFILE "82kx1280a28" = 82kx1280 with the 48 input projections (GDN
+in_proj_qkvz, attention qkv_proj) in FP8 W8A16 (out projections, lm_head, drafter and PLE BF16), which frees 1.8 GiB per GPU for 28+2
+lanes instead of 26+2; FALLBACK_PROFILE "82kx1280" (the submitted profile). The target and arc3-bundle are unchanged. arc3-code v15 also
+ships the AOT caches for Kaggle's model path, the Triton kernels and the PLE poll kernel's build state, which v14's starts recompiled.
+v16 (2026-10-31, Claude session 69c06084), for arc3-code v16, a separate package (arc3-code-v16): the user (10-31): "Add prune16 on top
+of this. We use 30+2 lanes and a longer ring. I'm taking the KL hit for an experiment on the public LB." PROFILE "82kx1632a30p16" = 82kx1280a28
+plus expert pruning (the bottom 16 routed experts per layer, ranked on public 25 + copycat 30 + additional 167), 30+2 lanes at
+82,528 and a 1632-row BF16 ring with the 352-slot exact set. FALLBACK_PROFILE stays 82kx1280."""
 
 # %% [1] Configuration
 import glob
@@ -28,13 +46,15 @@ NOTEBOOK_START = time.time()
 TRUE_SUBMISSION = os.environ.get("KAGGLE_IS_COMPETITION_RERUN", "").strip().lower() in ("1", "true")
 
 # --- the two submissions differ here (the user 10-24)
-PROFILE = "82kr1632"            # arc3-code v10's profiles, by name: "82kr1632" = lutc 82,528 x 26 + 2 (KVG 17.63), BF16 ring 1,632 rows
+PROFILE = "82kx1632a30p16"      # arc3-code v16 (the user 10-31, a public-LB experiment): FP8 tier A_in + prune16, 82,528 x 30 + 2,
+                                # ring 1632 + the exact set. "82kx1280a28" (arc3-code v15) = 82kx1280 with the input projections in FP8
+                                # and 28+2 lanes (82,528 x 28 + 2, KVG 18.99, GRAPH 150). Earlier profiles, by name: "82kr1632" = lutc 82,528 x 26 + 2 (KVG 17.63), BF16 ring 1,632 rows
                                 # (the user 10-28: the shipped default) | "80kr512" = v9's 80k (80,204 x 27 + 2, KVG 18.31) with a
                                 # 512-row ring; both with scaled16 + stochastic rounding and the two-kernel ring reader |
                                 # "82kx1280" (arc3-code v11; the user 10-28: idea 2, behind this flag) = 82kr1632 with a 1,280-row ring
                                 # plus 352 exact slots (64 pinned + 288 promoted by selection rate) and the promptmove rerope fix
-FALLBACK_PROFILE = "80kr512"    # used, and logged, when PROFILE is unknown or not in the mounted code's definition (the user's choice);
-                                # with arc3-code v9 or older mounted, 80k
+FALLBACK_PROFILE = "82kx1280"   # used, and logged, when PROFILE is unknown or not in the mounted code's definition: the submitted
+                                # notebook's profile (v15); then 82kr1632, then 80k (arc3-code v9 or older)
 PROFILE = str(PROFILE).strip()
 USE_RESTART_VALUE = True      # True: restart_value (the default from 10-25: the 9-h FIFO vs restart_value A/B n76, +3.5 est. points);
                                 # False: FIFO within each parked band
@@ -45,15 +65,19 @@ RV_BY_PROFILE = {               # restart_value's constants per profile: the 10-
     "82kr1632": "p=0.48,stuck=0.36,next=0.81,decay=0.81,left=1.00,level_tokens=57661,lane_toks=56",   # arc3-code v10 (its KDEF's
     "80kr512": "p=0.48,stuck=0.36,next=0.81,decay=0.81,left=1.00,level_tokens=57661,lane_toks=55",    # LANE_TOKS per profile)
     "82kx1280": "p=0.48,stuck=0.36,next=0.81,decay=0.81,left=1.00,level_tokens=57661,lane_toks=56",   # arc3-code v11 (82kr1632's lanes)
+    "82kx1280a28": "p=0.48,stuck=0.36,next=0.81,decay=0.81,left=1.00,level_tokens=57661,lane_toks=54",   # arc3-code v15 (30 sessions)
+    "82kx1632a30p16": "p=0.48,stuck=0.36,next=0.81,decay=0.81,left=1.00,level_tokens=57661,lane_toks=53",   # arc3-code v16 (32 sessions)
 }
 NLL_BY_PROFILE = {"80k": "0.3422915321304067",       # the pod's NLL panel per profile (test runs log the comparison); 80k: v9 only
                   "82kr1632": "0.3471216700030355", "80kr512": "0.3456764103217549",   # v10 (IE's hand-over note, 10-28)
-                  "82kx1280": "0.35258596732945363"}  # v11 (the 10-28 A/B arm plf2b01's panel, repeat difference 0)
+                  "82kx1280": "0.35258596732945363",  # v11 (the 10-28 A/B arm plf2b01's panel, repeat difference 0)
+                  "82kx1280a28": "0.35140981258634707",  # v15 (the A_in pod's f8a28c02, 10-31, repeat difference 0)
+                  "82kx1632a30p16": "0.347994263125133"}  # v16 (the A_in pod, 10-31, repeat difference 0)
 PROFILE_ASKED = PROFILE
 if PROFILE not in RV_BY_PROFILE:  # a name the shipped definition lacks would stop kaggle_run.py (a zero): the fallback instead, logged below
     PROFILE = FALLBACK_PROFILE if FALLBACK_PROFILE in RV_BY_PROFILE else "82kr1632"
 RV_CONSTANTS = RV_BY_PROFILE[PROFILE]   # "" = the code's built-in constants (the 10-20 fit; not for a submission)
-SHUFFLE_GAMES = False           # False: the games in the order served (offline: the list's order); True: a seeded shuffle
+SHUFFLE_GAMES = True            # False: the games in the order served (offline: the list's order); True: a seeded shuffle
 SHUFFLE_SEED = 0
 STATEFUL_KERNEL = True          # True (the user 10-25, adopted after the k81s A/B: 69.5 vs 67.7 est., within noise; the kernel healthy):
                                 # each conversation's Python calls share one persistent kernel, so variables persist between calls as in
@@ -62,16 +86,25 @@ STATEFUL_KERNEL = True          # True (the user 10-25, adopted after the k81s A
 CKPTFETCH = True                # True (as shipped): our startup prefetch of the weight shards (ckptfetch, 8 threads, one shard ahead);
                                 # False: ARC3_S2_CKPTFETCH_THREADS=0, the loader reads the shards itself. The user 10-15: ckptfetch must be
                                 # shown faster than the default loader on Kaggle; compare the server-up time of one run each way
-CKPTFETCH_FILES = 8             # arc3-code v12 (the user 10-28: the parallel PLE read): with CKPTFETCH on, this many weight shards are
+CKPTFETCH_FILES = 4             # arc3-code v12 (the user 10-28: the parallel PLE read): with CKPTFETCH on, this many weight shards are
                                 # read at once, one stream each, ahead of the loader (ARC3_S2_CKPTFETCH_FILES); 1 = v11b's one shard
                                 # ahead with 8 readers on it. arc3-code v11b or older ignores it
+PLE_COPY_THREADS = 16           # arc3-code v13 (the user 10-30): the PLE worker copies each checkpoint tensor's rows into its table on this
+                                # many threads, and with CKPTFETCH on it no longer waits for a shard's prefetch (ARC3_S2_PLECOPY_THREADS);
+                                # 1 = v12's path. The same bytes either way (the NLL panel is IDENTICAL). arc3-code v12 or older ignores it
+SHARD_FAULT_THREADS = 16        # arc3-code v14 (the user 10-30): while the server process loads a weight shard (the target's 15, the
+                                # drafter's one), this many threads read it through the page cache so the page faults overlap, and the
+                                # loader no longer waits for the shard's prefetch (ARC3_S2_FAULTIN_THREADS; needs CKPTFETCH on); 1 = v13's
+                                # path. The same bytes either way. arc3-code v13 or older ignores it
+CODE_MODEL = "arc3-code-v16"    # the code package's Kaggle Model slug (v16 is a separate package; v15, v14, v13 and v12 stay as they are).
+                                # Not found: any attached arc3-code package, logged
 
 # --- test runs (interactive sessions / "Save & Run All"); a competition rerun always plays the gateway for 9 h
 TEST_GAMES = "core55"           # "core55": the core 55 offline from the arc3-core55 dataset (the user 10-25: Save & Run All = the 4.5-h stress
                                 # test on the public 25 + copycat 30; scores readable) | "core55-sim": the same games through a local
                                 # competition-mode arcade (the gateway code path; baselines hidden, so the local score reads 0) |
                                 # "public25": the competition's environment files offline | "gateway": the real gateway
-TEST_BUDGET_S = 4.5 * 3600      # the 4.5-h stack test
+TEST_BUDGET_S = 2.25 * 3600     # the 2.25-h test (the submitted notebook's)
 BUDGET_S = 9 * 3600 if TRUE_SUBMISSION else TEST_BUDGET_S
 TEARDOWN_MARGIN_S = 150         # gameplay ends 150 s before the budget (the user 10-28; was 300; measured over 24 pod runs ending at the
                                 # gameplay end G: the client exits G-12..G+28 s, the server stops 2-7 s later, kaggle_run done <= G+35 s)
@@ -88,7 +121,8 @@ W = Path("/kaggle/working")
 W.mkdir(parents=True, exist_ok=True)
 REPORT = dict(label=LABEL, true_submission=TRUE_SUBMISSION, profile=PROFILE, fallback_profile=FALLBACK_PROFILE, use_restart_value=USE_RESTART_VALUE,
               rv_constants=RV_CONSTANTS if USE_RESTART_VALUE else None, shuffle=SHUFFLE_GAMES, stateful_kernel=STATEFUL_KERNEL,
-              shuffle_seed=SHUFFLE_SEED, ckptfetch=CKPTFETCH, ckptfetch_files=CKPTFETCH_FILES, budget_s=BUDGET_S,
+              shuffle_seed=SHUFFLE_SEED, ckptfetch=CKPTFETCH, ckptfetch_files=CKPTFETCH_FILES, ple_copy_threads=PLE_COPY_THREADS,
+              shard_fault_threads=SHARD_FAULT_THREADS, code_model=CODE_MODEL, budget_s=BUDGET_S,
               notebook_start=NOTEBOOK_START)
 
 
@@ -146,11 +180,13 @@ REPORT["clock"] = CLOCK
 say("clock: first cell %s; before it: this kernel %s s, the container's PID 1 %s s, the host's boot %s s, /kaggle/input's mtime %s s" % (
     time.strftime("%H:%M:%S", time.gmtime(NOTEBOOK_START)),
     *[("%.0f" % (NOTEBOOK_START - CLOCK[k])) if CLOCK.get(k) else "?" for k in ("kernel", "pid1", "host_boot", "kaggle_input_mtime")]))
-say("ARC3 notebook: %s, label %s, profile %s, %s, shuffle %s, stateful kernel %s, ckptfetch %s, budget %.1f h" % (
+say("ARC3 notebook: %s, label %s, profile %s, %s, shuffle %s, stateful kernel %s, ckptfetch %s, PLE copy %s, shard fault-in %s, "
+    "budget %.1f h" % (
     "COMPETITION RERUN" if TRUE_SUBMISSION else "test run (%s)" % TEST_GAMES, LABEL, PROFILE,
     ("restart_value (%s)" % (RV_CONSTANTS or "the code's constants")) if USE_RESTART_VALUE else "FIFO",
     ("seed %d" % SHUFFLE_SEED) if SHUFFLE_GAMES else "off", "on" if STATEFUL_KERNEL else "off", ("on, %d shards at once" % CKPTFETCH_FILES) if CKPTFETCH else "off (THREADS=0)",
-    BUDGET_S / 3600))
+    ("%d threads" % PLE_COPY_THREADS) if PLE_COPY_THREADS > 1 else "off (v12)",
+    ("%d threads" % SHARD_FAULT_THREADS) if SHARD_FAULT_THREADS > 1 else "off (v13)", BUDGET_S / 3600))
 
 # %% [2] Inputs: the three models, their mounts
 def find_model(slug, marker):
@@ -169,7 +205,11 @@ def find_model(slug, marker):
 
 TARGET = find_model("qwen3.8-flash-next-w4a16-intel-ple19", "ARC3_TARGET_VIEW.json")
 BUNDLE = find_model("arc3-bundle", "MANIFEST.json")
-CODE = find_model("arc3-code", "CODE_MANIFEST.json")
+CODE = find_model(CODE_MODEL, "CODE_MANIFEST.json")
+if CODE is None:                # v13: the separate package is not attached (or has another slug): any attached arc3-code package, logged
+    CODE = find_model("arc3-code", "CODE_MANIFEST.json")
+    say("the code package %r is NOT attached: using %s (check the code line below for its build and sha256)" % (CODE_MODEL, CODE))
+    REPORT["code_model_fallback"] = CODE
 CORE55 = next((os.path.dirname(p) for p in sorted(glob.glob("/kaggle/input/**/MANIFEST.json", recursive=True))
                if "arc3-core55" in p), None)   # the dataset (test runs only)
 COMP = next((p for p in glob.glob("/kaggle/input/competitions/*") if os.path.isdir(p)), None) or next(
@@ -197,6 +237,36 @@ say("code: built %s, %s members, sha256 %s (archive %s), overrides %s" % (
 REPORT["mounts"] = [l.split()[:3] for l in open("/proc/mounts") if "/kaggle/input" in l]
 for m in REPORT["mounts"]:
     say("mount %s" % " ".join(m))
+
+# FUSE guard (2026-10-29, the user): ckptfetch's read-ahead helps only when reads stay in the page cache (Kaggle's NFS). On a
+# FUSE mount (e.g. GCSFUSE) reads do not stay in the page cache, so the read-ahead would read every shard twice. There the
+# loader reads alone: CKPTFETCH off (ARC3_S2_CKPTFETCH_THREADS=0), vLLM's default loading. NFS: unchanged. Logs only.
+def _fs_type(path, mounts="/proc/mounts"):
+    """The filesystem type of the mount holding path (the longest matching mount point), or None."""
+    try:
+        real, best = os.path.realpath(path), (-1, None)
+        for line in open(mounts):
+            f = line.split()
+            if len(f) < 3:
+                continue
+            mp = f[1].replace("\\040", " ")
+            if (real == mp or real.startswith(mp.rstrip("/") + "/")) and len(mp) > best[0]:
+                best = (len(mp), f[2])
+        return best[1]
+    except Exception:  # noqa: BLE001  (a log line, never a stop)
+        return None
+
+
+INPUT_FS = {name: _fs_type(path) for name, path in (("target", TARGET), ("bundle", BUNDLE)) if path}
+REPORT["input_fs"] = INPUT_FS
+_fuse = sorted(n for n, t in INPUT_FS.items() if t and t.lower().startswith("fuse"))
+if _fuse and CKPTFETCH:
+    CKPTFETCH = False
+    REPORT["ckptfetch"] = False
+    REPORT["ckptfetch_guard"] = "off: FUSE mount for %s" % ", ".join(_fuse)
+    say("input filesystems %s: FUSE for %s, so ckptfetch is OFF (vLLM's default loading)" % (INPUT_FS, ", ".join(_fuse)))
+else:
+    say("input filesystems %s: ckptfetch %s" % (INPUT_FS, ("on, %d shards at once" % CKPTFETCH_FILES) if CKPTFETCH else "off (as set)"))
 
 # %% [3] Extract the runtime, venvs, games and code at / (the pod's absolute paths), in parallel
 EXTRACT = {}
@@ -371,9 +441,9 @@ KDEF_PATH = "/workspace/kvring_dev/kaggle/kaggle_defs/KDEF.json"
 try:                                   # 10-25: the mounted code's definition must have PROFILE; another arc3-code version lacks it and
     _profiles = sorted(json.load(open(KDEF_PATH))["profiles"])          # kaggle_run.py would stop on it (a zero): the fallback, logged
     say("code definition: profiles %s (code built %s)" % (_profiles, CODE_INFO.get("built")))
-    _fb = next((p for p in (FALLBACK_PROFILE, "80k") if p in _profiles and p in RV_BY_PROFILE), None)
+    _fb = next((p for p in (FALLBACK_PROFILE, "82kr1632", "80k") if p in _profiles and p in RV_BY_PROFILE), None)
     if PROFILE not in _profiles and _fb:
-        say("PROFILE %r is NOT in the mounted code's definition: using %s (attach arc3-code v12)" % (PROFILE, _fb))
+        say("PROFILE %r is NOT in the mounted code's definition: using %s (attach arc3-code v16)" % (PROFILE, _fb))
         REPORT["profile_fallback"] = dict(asked=PROFILE, used=_fb, profiles=_profiles)
         PROFILE, RV_CONSTANTS = _fb, RV_BY_PROFILE[_fb]
 except Exception as exc:  # noqa: BLE001
@@ -390,8 +460,10 @@ CFG = dict(label=LABEL, profile=PROFILE, gpu="0", port=1377, notebook_start=NOTE
            engine_audit=not TRUE_SUBMISSION,
            status_every_s=600, arc_wheels_dir=ARC_WHEELS_DIR, kdef=KDEF_PATH,
            extra_client_env={"ARC3_V80_STATEFUL": "1" if STATEFUL_KERNEL else "0"},   # the stateful kernel (kernel_ext; v5)
-           extra_server_env=(({"ARC3_S2_CKPTFETCH_FILES": str(CKPTFETCH_FILES)} if CKPTFETCH_FILES > 1 else {}) if CKPTFETCH
-                             else {"ARC3_S2_CKPTFETCH_THREADS": "0"}),  # v12: shards at once; ckptfetch off: the loader's own reads
+           extra_server_env=dict((({"ARC3_S2_CKPTFETCH_FILES": str(CKPTFETCH_FILES)} if CKPTFETCH_FILES > 1 else {}) if CKPTFETCH
+                                  else {"ARC3_S2_CKPTFETCH_THREADS": "0"}),   # v12: shards at once; ckptfetch off: the loader's own reads
+                                 **({"ARC3_S2_PLECOPY_THREADS": str(PLE_COPY_THREADS)} if PLE_COPY_THREADS > 1 else {}),   # v13
+                                 **({"ARC3_S2_FAULTIN_THREADS": str(SHARD_FAULT_THREADS)} if SHARD_FAULT_THREADS > 1 else {})),  # v14
            nll_panel=not TRUE_SUBMISSION,   # test runs: the NLL fingerprint on Kaggle's GPU (log only; only if the server is up before the client starts)
            nll_expect=NLL_BY_PROFILE.get(PROFILE, NLL_BY_PROFILE["80k"]))   # the pod's panel for the tier that runs
 REPORT["tier_run"] = dict(profile=PROFILE)
@@ -418,6 +490,37 @@ def _reader():                         # kaggle_run.py's lines, read in a thread
 
 _rd = threading.Thread(target=_reader, daemon=True)
 _rd.start()
+
+
+def _load_watch():                     # v13/v14: one line per weight load when its shard loop ends (the stage-2 receipts; a log only):
+    seen, t_end = set(), time.time() + 3 * 3600   # the PLE worker, the target, the drafter (v14: pid.N for a process's later loads)
+    while time.time() < t_end and len(seen) < 3 and proc.poll() is None:
+        time.sleep(15)
+        for p in glob.glob(S2 + "/receipts/proc-*.json"):
+            try:
+                if os.path.getmtime(p) < NOTEBOOK_START:
+                    continue
+                r = json.load(open(p)).get("ckptfetch") or {}
+                for pid, d in (r.get("per_pid") or {}).items():
+                    if pid in seen or "iter_s" not in d:
+                        continue
+                    seen.add(pid)
+                    ss = sorted(d.get("shard_s") or [0.0])
+                    say("weights loaded by the %s (pid %s): %d shards in %.0f s, per shard median %.1f s, max %.1f s; waited for the "
+                        "prefetch %.0f s%s%s" % (
+                            "PLE worker" if d.get("ple_worker") else "server process", pid, d.get("shards", 0), d.get("iter_s", 0),
+                            ss[len(ss) // 2], ss[-1], d.get("loader_wait_s", 0), "" if d.get("done") else " (ENDED EARLY)",
+                            ("; PLE copy %d threads: %d calls, %.1f GB in %.0f s, %d vendor calls, errors %s" % (
+                                r.get("plecopy", 0), r.get("plecopy_calls", 0), r.get("plecopy_bytes", 0) / 1e9, r.get("plecopy_s", 0),
+                                r.get("plecopy_fallback", 0), r.get("plecopy_errors") or 0)) if d.get("ple_worker") else
+                            ("; fault-in %d threads (%s): %.1f GB of this load's; process totals %.1f GB read, errors %s" % (
+                                r.get("faultin", 0), r.get("faultin_mode"), d.get("faultin_bytes", 0) / 1e9, r.get("faultin_bytes", 0) / 1e9,
+                                r.get("faultin_errors") or 0)) if r.get("faultin") else ""))
+            except Exception:  # noqa: BLE001  (a log line, never a stop)
+                continue
+
+
+threading.Thread(target=_load_watch, daemon=True).start()
 T_HARD = NOTEBOOK_START + BUDGET_S - HARD_STOP_S
 while proc.poll() is None and time.time() < T_HARD:
     time.sleep(2)

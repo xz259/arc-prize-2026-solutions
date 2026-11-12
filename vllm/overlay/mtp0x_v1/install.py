@@ -20,7 +20,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 PARTS = frozenset(p for p in os.environ.get('ARC3_MTP0X', '0').split(',') if p and p != '0')
-ADAPTER_PIN = 'acd782838a74189a5ec8f6f220a62d0d83b82b9f33d95c50ccb91013fa51bbed'
+ADAPTER_PIN = 'b3744381d32b9aea09dc4f69945267dfb3ef3779ab4018c919547588161905b4'   # arc3-code v15 (2026-10-31): runtime.py with tier A_in
 SAMPLER_MODULE = 'vllm.v1.worker.gpu.sample.sampler'
 SAMPLER_PIN = '5c06d57bf7df726146e385e678f8350bd2918fa29c7cfc233f12b81ba3e49f34'
 REPORT = dict(schema='arc3.mtp0x.v1', pid=os.getpid(), parts=sorted(PARTS), fp8w_layers={}, fp8w_shapes={},

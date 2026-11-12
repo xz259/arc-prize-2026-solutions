@@ -143,7 +143,7 @@ os.environ['PYTHONPATH'] = str(HERE/'combined-bootstrap')+':'+os.environ['PYTHON
 # off (byte-identical composition to qsa_frequency_eviction_v1), inventory (record only), A, AB2, AB2C; lm_head via ARC3_DENSE_FP8_LM_HEAD=1.
 FP8 = HERE/'dense_fp8_adapter_v1'
 os.environ.setdefault('ARC3_DENSE_FP8_TIER', 'off')
-assert os.environ['ARC3_DENSE_FP8_TIER'] in ('off', 'inventory', 'A', 'AB2', 'AB2C', 'A_qkvz', 'A_out', 'A_qkv'), os.environ['ARC3_DENSE_FP8_TIER']
+assert os.environ['ARC3_DENSE_FP8_TIER'] in ('off', 'inventory', 'A', 'AB2', 'AB2C', 'A_qkvz', 'A_out', 'A_qkv', 'A_in'), os.environ['ARC3_DENSE_FP8_TIER']
 os.environ['ARC3_DENSE_FP8_FAKE'] = os.environ.get('ARC3_STAGE_FP8_FAKE', 'off'); assert os.environ['ARC3_DENSE_FP8_FAKE'] in ('off', 'e4m3', 'e5m2')  # stage 13
 os.environ.update(ARC3_DENSE_FP8_RECEIPTS=str(S2D/'dense-fp8-startup'),
     ARC3_DENSE_FP8_CHAIN_BOOTSTRAP=str(HERE/'combined-bootstrap'/'sitecustomize.py'))

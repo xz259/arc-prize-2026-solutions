@@ -29,7 +29,8 @@ TIER_SUFFIXES.update({
     'A_qkv': ('.self_attn.qkv_proj',),
 })
 TIERS = {'off': (), 'inventory': (), 'A': ('A',), 'AB2': ('A', 'B2'), 'AB2C': ('A', 'B2', 'C'),
-         'A_qkvz': ('A_qkvz',), 'A_out': ('A_out',), 'A_qkv': ('A_qkv',)}   # per-family attribution variants
+         'A_qkvz': ('A_qkvz',), 'A_out': ('A_out',), 'A_qkv': ('A_qkv',),   # per-family attribution variants
+         'A_in': ('A_qkvz', 'A_qkv')}   # 2026-10-31 (arc3-code v15): the input projections only (ARC-2's A_in)
 # lm_head (tier B1) goes through UnquantizedEmbeddingMethod, handled by install_lm_head when ARC3_DENSE_FP8_LM_HEAD=1.
 
 LAYERS = {}
