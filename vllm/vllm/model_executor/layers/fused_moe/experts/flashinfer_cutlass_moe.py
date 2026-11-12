@@ -1,3 +1,4 @@
+import arc3_determinism
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
 
@@ -365,6 +366,7 @@ class FlashInferExperts(mk.FusedMoEExpertsModular):
             fc2_expert_weights = w2
 
         _ = flashinfer_cutlass_fused_moe(
+            use_fused_finalize=arc3_determinism.fused_finalize(),
             input=hidden_states,
             token_selected_experts=topk_ids.to(torch.int),
             token_final_scales=topk_weights,

@@ -1,0 +1,29 @@
+--- a/vllm/models/qwen3_8_flash_next/nvidia/ops/qsa.py
++++ b/vllm/models/qwen3_8_flash_next/nvidia/ops/qsa.py
+@@ -3,6 +3,8 @@
+ """Triton kernels for the Qwen3.8-Flash-Next weight-free QSA path."""
+ 
+ from __future__ import annotations
++
++import arc3_determinism
+ 
+ import math
+ 
+@@ -796,7 +798,7 @@
+             if use_cooperative_topk
+             else torch.ops._C.persistent_topk
+         )
+-        topk_op(logits, visible_blocks, blocks, topk_workspace, block_topk, columns)
++        arc3_determinism.select_topk(topk_op, logits, visible_blocks, blocks, topk_workspace, block_topk, columns)
+         expand_qsa_block_indices_cuda(
+             blocks,
+             query_positions[row_slice],
+@@ -872,6 +874,8 @@
+     else:
+         block_n, target_splits, partial_warps = 64, 1, 2
+ 
++    block_n, target_splits, partial_warps = arc3_determinism.sparse_prefill_profile(
++        q.shape[0], block_n, target_splits, partial_warps)
+     num_tiles = triton.cdiv(logical_indices.shape[1], block_n)
+     # Avoid empty splits when the selection width is smaller than the profile.
+     max_useful_splits = 1 << (num_tiles.bit_length() - 1)

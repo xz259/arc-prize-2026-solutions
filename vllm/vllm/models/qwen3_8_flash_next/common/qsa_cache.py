@@ -661,6 +661,16 @@ class QSAStateBackend(AttentionBackend):
     def get_name() -> str:
         return "QWEN38_FLASH_NEXT_EXP_QSA_STATE"
 
+    @classmethod
+    def customize_spec(cls, spec):
+        # The alignment probe describes main KV, not this side cache.
+        import os
+        fmt = os.environ.get("ARC3_QSA_KV_FORMAT", "bf16")
+        if fmt == "bf16":
+            return spec
+        from arc3_qsa_cache import customize_main_spec
+        return customize_main_spec(spec, fmt)
+
     @staticmethod
     def get_impl_cls():
         raise NotImplementedError(

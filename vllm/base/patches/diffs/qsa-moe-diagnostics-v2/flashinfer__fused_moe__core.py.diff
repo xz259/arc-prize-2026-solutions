@@ -1,0 +1,12 @@
+--- a/flashinfer/fused_moe/core.py
++++ b/flashinfer/fused_moe/core.py
+@@ -402,6 +402,9 @@
+                 )
+ 
+             self.fused_moe_runner = MoERunner.runner_dict[instance_key]
++
++        def get_cache_key_extras(self, inputs):
++            return super().get_cache_key_extras(inputs) + (self.use_fused_finalize,)
+ 
+         def get_valid_tactics(
+             self,

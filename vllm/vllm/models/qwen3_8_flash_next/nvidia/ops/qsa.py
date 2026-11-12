@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+import arc3_determinism
+
 import math
 
 import torch
@@ -796,7 +798,7 @@ def qsa_select_paged_tokens(
             if use_cooperative_topk
             else torch.ops._C.persistent_topk
         )
-        topk_op(logits, visible_blocks, blocks, topk_workspace, block_topk, columns)
+        arc3_determinism.select_topk(topk_op, logits, visible_blocks, blocks, topk_workspace, block_topk, columns)
         expand_qsa_block_indices_cuda(
             blocks,
             query_positions[row_slice],
@@ -872,6 +874,8 @@ def qsa_sparse_paged_attention(
     else:
         block_n, target_splits, partial_warps = 64, 1, 2
 
+    block_n, target_splits, partial_warps = arc3_determinism.sparse_prefill_profile(
+        q.shape[0], block_n, target_splits, partial_warps)
     num_tiles = triton.cdiv(logical_indices.shape[1], block_n)
     # Avoid empty splits when the selection width is smaller than the profile.
     max_useful_splits = 1 << (num_tiles.bit_length() - 1)

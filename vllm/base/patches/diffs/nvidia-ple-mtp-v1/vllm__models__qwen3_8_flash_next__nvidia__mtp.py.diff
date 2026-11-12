@@ -1,0 +1,30 @@
+--- a/vllm/models/qwen3_8_flash_next/nvidia/mtp.py
++++ b/vllm/models/qwen3_8_flash_next/nvidia/mtp.py
+@@ -71,6 +71,14 @@
+         else:
+             remapped.append(name)
+     return remapped
++
++
++def _remap_quantized_layers(quantized_layers: dict[str, dict], mtp_start_layer_idx: int) -> dict[str, dict]:
++    """Map checkpoint MTP indices into the standalone draft model."""
++    return {
++        _remap_ignored_layers([name], mtp_start_layer_idx)[0]: info
++        for name, info in quantized_layers.items()
++    }
+ 
+ 
+ def _remap_mtp_weight_name(name: str) -> str | None:
+@@ -132,6 +140,12 @@
+                 _remap_ignored_layers(exclude_modules, mtp_start_layer_idx),
+             )
+ 
++        quantized_layers = getattr(draft_quant_config, "quantized_layers", None)
++        if quantized_layers:
++            draft_quant_config.quantized_layers = _remap_quantized_layers(
++                quantized_layers, mtp_start_layer_idx
++            )
++
+     draft_vllm_config = replace(
+         vllm_config,
+         model_config=speculative_config.draft_model_config,

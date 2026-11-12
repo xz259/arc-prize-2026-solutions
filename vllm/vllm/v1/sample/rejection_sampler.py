@@ -14,7 +14,7 @@ from vllm.config.model import PROCESSED_LOGPROBS_MODES
 from vllm.logger import init_logger
 from vllm.triton_utils import tl, triton
 from vllm.v1.outputs import LogprobsLists, LogprobsTensors, SamplerOutput
-from vllm.v1.sample.logits_processor.builtin import MinTokensLogitsProcessor
+from vllm.v1.sample.logits_processor.builtin import MinTokensLogitsProcessor, MinPLogitsProcessor
 from vllm.v1.sample.metadata import SamplingMetadata
 from vllm.v1.sample.ops.bad_words import apply_bad_words_with_drafts
 from vllm.v1.sample.ops.penalties import apply_all_penalties
@@ -543,6 +543,19 @@ def apply_sampling_constraints(
     )
     # NOTE(woosuk): Update `logits` in place to avoid allocating a new tensor.
     logits.div_(temperature.unsqueeze(-1))
+
+    # Match ordinary sampling: temperature -> min-p -> top-k -> top-p.
+    # Bonus tokens already use Sampler and the same MinP processor.
+    # These filtered target logits feed both acceptance and recovery.
+    for processor in sampling_metadata.logitsprocs.argmax_invariant:
+        if isinstance(processor, MinPLogitsProcessor) and processor.min_p_count:
+            min_p = expand_batch_to_tokens(
+                processor.min_p.view(-1), cu_num_draft_tokens, num_tokens
+            ).unsqueeze(1)
+            probability_values = torch.nn.functional.softmax(logits, dim=-1)
+            max_probabilities = torch.amax(probability_values, dim=-1, keepdim=True)
+            adjusted_min_p = max_probabilities.mul_(min_p)
+            logits.masked_fill_(probability_values < adjusted_min_p, -float("inf"))
 
     # Get expanded top_k and top_p tensors.
     top_k = None

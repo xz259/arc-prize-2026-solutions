@@ -925,7 +925,9 @@ class SamplingParams(
             )
 
         # Some sampling parameters are not yet compatible with spec decoding.
-        if self.min_p > _SAMPLING_EPS or self.logit_bias:
+        import os
+        min_p_supported = os.environ.get("ARC3_MTP_MIN_P") == "1"
+        if (self.min_p > _SAMPLING_EPS and not min_p_supported) or self.logit_bias:
             raise VLLMValidationError(
                 "The min_p and logit_bias sampling parameters "
                 "are not yet supported with speculative decoding."

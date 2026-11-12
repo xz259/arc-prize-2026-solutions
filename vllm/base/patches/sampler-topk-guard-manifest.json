@@ -1,0 +1,20 @@
+{
+  "applied": true,
+  "reverted": false,
+  "path": "vllm/v1/sample/ops/topk_topp_sampler.py",
+  "original_sha256": "bc8c1d91ad624368d2bd87a53c0361e550d28b060bcd460462d2f86565c26426",
+  "patched_sha256": "a660990ec2e84cd8e0e3ff47146dadd2757399228de09a7c2b9959a26d77d882",
+  "flag": "ARC3_SKIP_REDUNDANT_TOPK",
+  "default": "0",
+  "implementation_sha256": "147080c133311774aac6f245de743c19ad111b59a34e65c0db1ec1472f7fe935",
+  "server_identity": {
+    "pid": 51757,
+    "state": "D",
+    "ppid": 51755,
+    "pgid": 51757,
+    "sid": 51757,
+    "start_ticks": 167652059,
+    "cmdline_sha256": "7ef4de885d5823d34706bd8958d539432284314b442c4544db0837bf42194d2b"
+  },
+  "runtime_source_after_sha256": "a660990ec2e84cd8e0e3ff47146dadd2757399228de09a7c2b9959a26d77d882"
+}

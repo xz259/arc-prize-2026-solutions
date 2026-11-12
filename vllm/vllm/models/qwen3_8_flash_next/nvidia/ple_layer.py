@@ -28,6 +28,7 @@ from vllm.model_executor.layers.quantization.base_config import (
     QuantizeMethodBase,
 )
 from vllm.model_executor.layers.quantization.fp8 import Fp8Config
+from vllm.model_executor.layers.quantization.modelopt import ModelOptMixedPrecisionConfig
 from vllm.model_executor.layers.quantization.utils.fp8_utils import (
     create_fp8_scale_parameter,
     create_fp8_weight_parameter,
@@ -168,9 +169,14 @@ class Qwen3_8FlashNextPLEFp8EmbeddingMethod(QuantizeMethodBase):
             input_size_per_partition,
             None,
             weight_loader,
-            scale_dtype=torch.bfloat16,
+            scale_dtype=torch.float32,
         )
         layer.register_parameter("weight_scale", weight_scale)
+
+    def process_weights_after_loading(self, layer: nn.Module) -> None:
+        sentinel = torch.finfo(torch.float32).min
+        if torch.any(layer.weight_scale == sentinel):
+            raise ValueError("FP8 PLE checkpoint is missing its global scale")
 
     def apply(
         self,
@@ -189,6 +195,11 @@ def _get_ple_embedding_quant_method(
     prefix: str,
 ) -> QuantizeMethodBase | None:
     """Select global-scale FP8 only for quantized PLE checkpoint shards."""
+
+    if isinstance(quant_config, ModelOptMixedPrecisionConfig):
+        if quant_config._resolve_quant_algo(prefix) == "FP8":
+            return Qwen3_8FlashNextPLEFp8EmbeddingMethod()
+        return None
 
     if not isinstance(quant_config, Fp8Config):
         return None

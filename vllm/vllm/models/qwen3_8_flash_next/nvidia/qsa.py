@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import ClassVar, cast
 
 import torch
@@ -48,6 +49,7 @@ from vllm.v1.attention.backends.flash_attn import (
 )
 from vllm.v1.kv_cache_interface import (
     FullAttentionSpec,
+    KVQuantMode,
     KVCacheSpec,
     get_kv_quant_mode,
 )
@@ -55,6 +57,10 @@ from vllm.v1.kv_cache_interface import (
 from ..common.qsa_cache import QSAForwardMetadata
 from . import model
 from .indexer_qsa import QSAIndexer
+
+_ARC3_QSA_KV_FORMAT = os.environ.get("ARC3_QSA_KV_FORMAT", "bf16")
+if _ARC3_QSA_KV_FORMAT not in {"bf16", "fp8_e4m3", "fp8_e5m2", "nvfp4"}:
+    raise ValueError("Unsupported opt-in QSA cache format")
 
 
 class Qwen3_8FlashNextQSAMetadataBuilder(FlashAttentionMetadataBuilder):
@@ -68,6 +74,20 @@ class Qwen3_8FlashNextQSAFlashAttentionBackend(FlashAttentionBackend):
 
     supported_dtypes: ClassVar[list[torch.dtype]] = [torch.bfloat16]
     supported_kv_cache_dtypes: ClassVar[list[CacheDType]] = ["auto", "bfloat16"]
+
+    @classmethod
+    def customize_spec(cls, spec):
+        if _ARC3_QSA_KV_FORMAT == "bf16":
+            return spec
+        from arc3_qsa_cache import customize_main_spec
+        return customize_main_spec(spec, _ARC3_QSA_KV_FORMAT)
+
+    @staticmethod
+    def get_kv_cache_shape(num_blocks, block_size, num_kv_heads, head_size, cache_dtype_str="auto"):
+        if _ARC3_QSA_KV_FORMAT == "bf16":
+            return FlashAttentionBackend.get_kv_cache_shape(num_blocks, block_size, num_kv_heads, head_size, cache_dtype_str)
+        from arc3_qsa_cache import side_bytes
+        return (num_blocks, num_kv_heads, block_size, 2*side_bytes(head_size, _ARC3_QSA_KV_FORMAT))
 
     @staticmethod
     def get_name() -> str:
@@ -110,6 +130,12 @@ class Qwen3_8FlashNextQSAFlashAttentionImpl(FlashAttentionImpl):
             )
         self.supports_quant_query_input = False
 
+    def do_kv_cache_update(self, layer, key, value, kv_cache, slot_mapping):
+        if _ARC3_QSA_KV_FORMAT == "bf16":
+            return super().do_kv_cache_update(layer, key, value, kv_cache, slot_mapping)
+        from arc3_qsa_cache import store
+        return store(key, value, kv_cache, slot_mapping, _ARC3_QSA_KV_FORMAT)
+
     def forward_qsa(
         self,
         layer: torch.nn.Module,
@@ -141,6 +167,11 @@ class Qwen3_8FlashNextQSAFlashAttentionImpl(FlashAttentionImpl):
             raise RuntimeError("QSA owner did not provide its top-k buffer")
         logical_indices = topk_buffer[:num_tokens]
         token_to_req = token_to_req[:num_tokens]
+        if _ARC3_QSA_KV_FORMAT != "bf16":
+            from arc3_qsa_cache import attention
+            attention(query[:num_tokens], kv_cache, logical_indices,
+                          attn_metadata.block_table, token_to_req, output[:num_tokens], _ARC3_QSA_KV_FORMAT)
+            return output
         key_cache, value_cache = kv_cache.transpose(1, 2).split(self.head_size, dim=-1)
         key_cache = canonicalize_singleton_dim_strides(key_cache)
         value_cache = canonicalize_singleton_dim_strides(value_cache)
@@ -207,6 +238,8 @@ class Qwen3_8FlashNextQSAAttention(Qwen3NextAttention, AttentionLayerBase):
         self.config = config
         self.hidden_size = int(config.hidden_size)
         tp_size = get_tensor_model_parallel_world_size()
+        if _ARC3_QSA_KV_FORMAT != "bf16" and tp_size != 1:
+            raise NotImplementedError("Initial quantized QSA validation is scoped to TP1")
         self.total_num_heads = int(config.num_attention_heads)
         if self.total_num_heads % tp_size:
             raise ValueError("QSA attention heads must be divisible by TP size")
@@ -290,6 +323,9 @@ class Qwen3_8FlashNextQSAAttention(Qwen3NextAttention, AttentionLayerBase):
             raise NotImplementedError(
                 "Qwen3.8-Flash-Next QSA requires BF16 cache storage"
             )
+        if _ARC3_QSA_KV_FORMAT != "bf16":
+            self.kv_cache_torch_dtype = torch.uint8
+        self.arc3_qsa_kv_format = _ARC3_QSA_KV_FORMAT
         self.kv_sharing_target_layer_name = None
         self.kv_cache = torch.tensor([])
         set_default_quant_scales(self, register_buffer=True)
@@ -335,6 +371,14 @@ class Qwen3_8FlashNextQSAAttention(Qwen3NextAttention, AttentionLayerBase):
         return self.attn_backend
 
     def get_kv_cache_spec(self, vllm_config: VllmConfig) -> KVCacheSpec:
+        if _ARC3_QSA_KV_FORMAT != "bf16":
+            from arc3_qsa_cache import side_bytes, quant_mode
+            return FullAttentionSpec(
+                block_size=vllm_config.cache_config.block_size,
+                num_kv_heads=self.num_kv_heads, head_size=self.head_dim, head_size_v=self.head_dim,
+                dtype=torch.uint8, kv_quant_mode=quant_mode(_ARC3_QSA_KV_FORMAT),
+                state_content_bytes=2*side_bytes(self.head_dim, _ARC3_QSA_KV_FORMAT),
+            )
         return FullAttentionSpec(
             block_size=vllm_config.cache_config.block_size,
             num_kv_heads=self.num_kv_heads,
