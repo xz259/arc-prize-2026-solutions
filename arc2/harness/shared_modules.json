@@ -1,0 +1,7 @@
+{
+  "_comment": "ARC-3 modules the ARC-2 client imports (never copies). Paths are relative to the ARC-3 harness root (harness_v6). The loader refuses a file whose sha256 differs. Roots: pod /workspace/kvring_dev/fin74/s2/harness_v6 (after extracting arc3-code v12 at /); local ../../inference_stack/code_snapshot_20261028/bundle/workspace/kvring_dev/fin74/s2/harness_v6 (relative to arc2_stack/harness).",
+  "source": "arc3-code v12 (sha256 a5736d58128e704f...), harness_v6/v62",
+  "modules": {
+    "v62/transport.py": "448feff27f5186d346df1b1597ba96dab703c0aa2acb4bfeaacc5ba37b96ce87"
+  }
+}

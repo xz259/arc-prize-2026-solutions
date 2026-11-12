@@ -1,0 +1,23 @@
+{
+ "built": "2026-10-31T07:23:19Z",
+ "files": {
+  "base/usr/local/lib/python3.12/dist-packages/vllm/models/qwen3_8_flash_next/nvidia/hyperconnection.py": {
+   "bytes": 10441,
+   "original_sha256": "6457124bb3710630bae671848c50864b1d0fc9217135bcec955659e0a0e38f28",
+   "patched_sha256": "cd796ddfc46ba43c71894e7918b5c21087a4d88e0063197425795ffa70de9ac1"
+  },
+  "base/usr/local/lib/python3.12/dist-packages/vllm/models/qwen3_8_flash_next/nvidia/qsa.py": {
+   "bytes": 20251,
+   "original_sha256": "a75b7b0fb72761de2fb246ee28dd685054fe6f85112387c7c91efa3c65db52a6",
+   "patched_sha256": "964d81e8e383c9a7e5a785cea8e8b8998bff6059b11c5622993a26c7486daa61"
+  },
+  "base/usr/local/lib/python3.12/dist-packages/vllm/v1/worker/gpu_worker.py": {
+   "bytes": 66771,
+   "original_sha256": "923767cea120a027ca36683bd48b7659eadbfa4cbd4acbcf52a80cee0c0a0ec4",
+   "patched_sha256": "ccfcf35ffbd2853e35123569c71184c9e04e4873708c8336eaf81e4d0eceb9d2"
+  }
+ },
+ "pod": "1fa61e3cf31e",
+ "private": "/workspace/arc3-inference/runtime",
+ "shared": "/mnt/shared/arc3-inference/runtime"
+}
