@@ -4,8 +4,8 @@ Code behind my ARC Prize 2026 entries on Kaggle.
 
 | Track | Leaderboard | Hardware and time limit | Description |
 |---|---|---|---|
-| ARC-AGI-3 | 58.59 (4th on the public leaderboard) | one RTX PRO 6000, 9 hours | [write-up](arc3/docs/writeup.md), also [on Kaggle](https://www.kaggle.com/competitions/arc-prize-2026-arc-agi-3/writeups/public-lb-4th) |
-| ARC-AGI-2 | 76.81 | four L4s, 12 hours | [arc2/README.md](arc2/README.md) |
+| ARC&#8209;AGI&#8209;3 | 58.59 (4th on the public leaderboard) | one RTX PRO 6000, 9 hours | [write-up](arc3/docs/writeup.md), also [on Kaggle](https://www.kaggle.com/competitions/arc-prize-2026-arc-agi-3/writeups/public-lb-4th) |
+| ARC&#8209;AGI&#8209;2 | 76.81 | four L4s, 12 hours | [arc2/README.md](arc2/README.md) |
 
 Both entries run Intel's W4A16 AutoRound quantization of Qwen3.8-Flash-Next as an agent that works through a Python tool. The model itself is not trained; only the small MTP drafter used for speculative decoding is fine-tuned. Most of the work is in the inference engine and in how the harness shares it between tasks.
 
@@ -105,12 +105,10 @@ The comments also carry working notes: dates, run names, and quotes of my instru
 
 ## Third-party code and licences
 
-| Path | Licence | Origin |
-|---|---|---|
-| `vllm/` | Apache-2.0 ([vllm/LICENSE](vllm/LICENSE)) | vLLM, and our layers on it, which replace vLLM functions with modified copies. Details and the upstream pull requests that some pieces follow are in [vllm/README.md](vllm/README.md). |
-| `arc2/engine/`, `arc2/l4port/`, `arc2/kaggle/runtime_patch/` | Apache-2.0 | The engine code of the ARC-AGI-2 port, likewise derived from vLLM. |
-| `arc3/harness/` | Apache-2.0 (`arc3/harness/src/LICENSE.dfranzen`) | `src/` is @dfranzen's milestone-2 solution ([da-fr/arc-agi-3-solution](https://github.com/da-fr/arc-agi-3-solution) at `10882e3`), unmodified: his agent, built on Tufa Labs' Duck harness, and Tufa Labs' framework `taaf`. Our layers patch it and in places carry modified copies of its code and prompts. |
-| `training/mtp_drafter/kit/qwen38_mtp.py` | Apache-2.0 | A port of vLLM's model code for the MTP head. |
-| everything else | MIT-0 ([LICENSE](LICENSE)) | Ours: the ARC-AGI-2 harness, the Kaggle kits, the training and analysis scripts, the documents. |
+- **`vllm/`: Apache-2.0** ([vllm/LICENSE](vllm/LICENSE)). vLLM, and our layers on it, which replace vLLM functions with modified copies. [vllm/README.md](vllm/README.md) has the details and lists the upstream pull requests that some pieces follow.
+- **`arc2/engine/`, `arc2/l4port/` and `arc2/kaggle/runtime_patch/`: Apache-2.0.** The engine code of the ARC-AGI-2 port, likewise derived from vLLM.
+- **`arc3/harness/`: Apache-2.0** (`arc3/harness/src/LICENSE.dfranzen`). `src/` is @dfranzen's milestone-2 solution ([da-fr/arc-agi-3-solution](https://github.com/da-fr/arc-agi-3-solution) at `10882e3`), unmodified: his agent, built on Tufa Labs' Duck harness, and Tufa Labs' framework `taaf`. Our layers patch it and in places carry modified copies of its code and prompts.
+- **`training/mtp_drafter/kit/qwen38_mtp.py`: Apache-2.0.** A port of vLLM's model code for the MTP head.
+- **Everything else: MIT-0** ([LICENSE](LICENSE)). Ours: the ARC-AGI-2 harness, the Kaggle kits, the training and analysis scripts, and the documents.
 
 Some GDN kernels in `vllm/stage2/` derive from the flash-linear-attention kernels that vLLM bundles (MIT; its licence is in `vllm/vllm/third_party/flash_linear_attention/`).
