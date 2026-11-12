@@ -1,35 +1,39 @@
-# ARC-2 harness v0
+# The ARC-AGI-2 harness (v2q)
 
-A minimal client for the ARC-3 serving stack: one persistent session per puzzle attempt, a python tool with a persistent
-kernel, exact verification on the demonstrations, and a token budget per attempt. The plan and its decisions:
-[../PLAN_V0_2026-10-29.md](../PLAN_V0_2026-10-29.md).
-
-## Layout
+One puzzle attempt, a *pass*, is a persistent session on the server and a Python kernel that holds the puzzle. The runner schedules passes over the server's lanes and builds the submission from their answers. The method is described in [`../README.md`](../README.md); this page maps it to the files. On the pods and on Kaggle this directory is `/mnt/shared/arc2/harness_v2q`.
 
 | File | Role |
 |---|---|
-| `arc2/tasks.py` | loading, grid text (ARC-3 colour letters by default, digits optional), Kaggle submission format, local scorer |
-| `arc2/prelude.py` | runs inside each attempt's kernel: `train`, `test`, `check`, `submit`, `history`, `programs`, `source`, `show` |
-| `arc2/kernel_child.py`, `arc2/kernel.py` | the persistent python process per attempt: 60-s limit per call, restart with definition replay, ARC-3's tool-message JSON |
-| `arc2/texts.json`, `arc2/prompts.py` | every model-facing text; system prompt, opener (pinned on the server), cue texts for the transport |
-| `arc2/agent.py` | one attempt: the turn loop, length pauses, closes, nudges, budget notice, fallback |
-| `arc2/runner.py` | lanes over the task queue (FIFO, a finished lane takes the next task), logs, `submission.json`, `score.json`, `summary.md` |
-| `arc2/shared.py`, `shared_modules.json` | imports ARC-3's `v62/transport.py` by path, refused unless its sha256 matches the pin |
-| `arc2/fake.py` | scripted stand-in for the server session (`--fake`) |
-| `arc2/represent.py` | the re-presented panel (memorization control): one symmetry and a 1-9 colour permutation per task, scored in its own frame; seed 1 is in `../official/represented/` |
-| `tests/test_arc2.py` | 23 local tests (no server) |
-| `scripts/run_eval_v0.sh` | the pod command |
+| `arc2/runner.py` | Schedules the passes over the lanes, decides which puzzle gets the next pass, and rewrites `submission.json` after every pass that ends. |
+| `arc2/agent.py` | One pass: the turn loop on the session, the Python calls, the token budget, and the stops. |
+| `arc2/prelude.py` | What the model finds in its kernel: `train`, `test`, `check`, `submit`, `note`, `history`, `source`, `show`. Expected outputs are checked against private copies, so the model's code cannot change what is verified. |
+| `arc2/kernel.py`, `arc2/kernel_child.py` | The persistent Python process of a pass, with a time limit per call. After a timeout the process restarts and the model's definitions are replayed. |
+| `arc2/prompts.py`, `arc2/texts.json` | Every model-facing text. The puzzle's grids are pinned on the server: eviction leaves them alone until the model has stopped attending to them. |
+| `arc2/slots.py` | Which two answers are submitted for a test input, and how far along a puzzle is. |
+| `arc2/review.py` | The review session: a fresh session that sees the puzzle and the answers of two passes, and saves its own two attempts. |
+| `arc2/program.py` | Rebuilds the program behind an answer from the calls of a pass and checks it in a fresh kernel. |
+| `arc2/tasks.py` | Loading the tasks, the text form of a grid, the submission format, and the local scorer. |
+| `arc2/shared.py`, `shared_modules.json` | Imports the session client of the ARC-AGI-3 harness (`../../arc3/harness/v62/transport.py`) by path and refuses a copy whose hash differs from the pin. |
+| `arc2/images.py`, `arc2/judge.py`, `arc2/represent.py` | Options that the submitted runs leave off: grid images beside the text, a judge session that ranks candidate answers, and transformed copies of the puzzles as a control for memorization. |
+| `arc2/fake.py` | A scripted stand-in for the server, for dry runs and tests. |
+| `tests/test_arc2.py` | 82 tests; they need no server. |
 
-## Run
+The options of the submitted runs are the `HARNESS_ARGS` list in [`../kaggle/kaggle_run_arc2_v2f.py`](../kaggle/kaggle_run_arc2_v2f.py), with the order of the later passes set in the notebook.
+
+## Trying it without a server
+
+The tests and a dry run need the competition's task files (`arc-agi_training_challenges.json`, `arc-agi_evaluation_challenges.json` and their solutions) in `arc2/official/data/` of this repository, and Python with numpy.
 
 ```bash
-cd arc2_stack/harness
-python3 -m unittest tests.test_arc2                       # local, no server
-python3 -m arc2.runner --out /tmp/arc2_dry --fake          # dry run over the 120 evaluation tasks
+export ARC2_ARC3_HARNESS_ROOT=../../arc3/harness
 ```
 
-On the pod (server up, profile 82kr1632): `bash scripts/run_eval_v0.sh NAME [--limit 3 --lanes 2 --budget 20000]`. Sampling defaults to T 0.6 (ARC-3's shipped value). The re-presented panel: add `--challenges ../official/represented/represented_s1_challenges.json --solutions ../official/represented/represented_s1_solutions.json`.
+```bash
+python3 -m unittest tests.test_arc2
+```
 
-Outputs per run: `settings.json`, `tasks/<id>/log.jsonl` (every server request and response, every tool call),
-`tasks/<id>/attempt.json`, `results.jsonl`, `submission.json` (rewritten after each task), `score.json`, `summary.md`,
-`metrics_before.txt` / `metrics_after.txt` (the server's `/metrics`, for drafter acceptance).
+```bash
+python3 -m arc2.runner --out /tmp/arc2_dry --fake --limit 3
+```
+
+Run them from this directory. The dry run answers every request with a scripted reply, so it exercises the kernel, the turn loop, the logs and the scorer, and scores zero.
