@@ -1,3 +1,5 @@
+# ARC-AGI-3: solution write-up
+
 I would like to thank the ARC Prize Foundation and Kaggle for hosting this competition. I have been a fan of ARC-AGI since my early days on Kaggle. I had never entered before, as I had no approach I found viable, but I always read the winning solutions and kept up with the news. A couple of weeks before the second milestone prize, movement on the public leaderboard led me to @chiefkeith's Qwen3.8-Flash-Next notebook, and I immediately saw a lot of room for improvement. My experience from the AIMO competitions suggested that a capable base model behind a well-optimized inference pipeline can do very well without any training, while RL without distillation from a stronger teacher may not pay off.
 
 The second-milestone solutions confirmed this direction, and I learned a lot from them, especially from @dfranzen's. Compared with theirs, my pipeline was less token-efficient, partly because of its shorter context and partly because of its 4-bit KV cache, which led me to look closely at output quality and numerical precision. For offline validation, I used the 25 public evaluation games together with 30 custom games selected from those made by @sonphamorg and @markbarney ([gallery](https://arc.markbarney.net/arc3/gallery)).
@@ -72,7 +74,9 @@ This comes to 148 bytes per key or value vector, in NVFP4's byte layout.
 
 The table compares it with the alternatives we screened, by excess KL as a multiple of ours, where
 
-$$\text{excess KL} = \mathrm{KL}(\text{BF16 cache} \,\|\, \text{format}) - \text{one-ulp floor}$$
+```math
+\text{excess KL} = \mathrm{KL}(\text{BF16 cache} \,\|\, \text{format}) - \text{one-ulp floor}
+```
 
 The rows come from two screens with different panels, each of which also measured our format, so only the ratios are comparable across rows; in the main screen ours reads 0.0211 against a floor of 0.0129.
 
@@ -93,11 +97,15 @@ Our format changes the top-ranked next token about as often as FP8 does (at 3.6%
 
 **GDN recurrent state.** Each head of a GDN layer carries a state matrix *S* updated by a gated delta rule, with key *k*, value *v*, query *q*, write strength *β* and decay *α* at token *t*:
 
-$$S_t = \alpha_t\, S_{t-1}\left(I - \beta_t k_t k_t^\top\right) + \beta_t v_t k_t^\top, \qquad o_t = S_t q_t, \qquad \alpha_t = e^{g_t} \in (0, 1)$$
+```math
+S_t = \alpha_t\, S_{t-1}\left(I - \beta_t k_t k_t^\top\right) + \beta_t v_t k_t^\top, \qquad o_t = S_t q_t, \qquad \alpha_t = e^{g_t} \in (0, 1)
+```
 
 The decay is computed in FP32, but vLLM stores *S* in BF16, once per speculative step (about every 4 tokens). When the decay accumulated between two stores is below half a BF16 unit in the last place (about 0.2%), rounding returns the old value, so heads whose horizon 1/(1 − *α*) exceeds about 2K tokens stop decaying and their state stagnates on old memory (for FP16 the threshold is about 8-16K). We ran an FP32 copy of the state alongside and measured each head's readout error, the relative error of its output:
 
-$$\text{readout error} = \frac{\lVert (S - S_{\text{exact}})\,q \rVert}{\lVert S_{\text{exact}}\,q \rVert}$$
+```math
+\text{readout error} = \frac{\lVert (S - S_{\text{exact}})\,q \rVert}{\lVert S_{\text{exact}}\,q \rVert}
+```
 
 It grew with the horizon, from 0.17% in heads with horizons below 64 tokens to about 15% in the long-horizon heads at positions 96-128K, biased toward stale memory. The NLL of the observation text that the harness appends rose by 1.3%, and the KL at action tokens was more than twice the floor at positions 96-128K (0.162 against 0.072).
 
