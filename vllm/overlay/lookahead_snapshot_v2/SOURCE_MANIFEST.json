@@ -1,0 +1,52 @@
+{
+  "helper_modules": {
+    "arc3_qsa_cache": "46d3ac1527fb064c7ede79db5bd004fe32542ab21dadf198b6a01534228fc581",
+    "arc3_qsa_nvfp4": "2c890032c492c7cb312fee369a35de99ae0451921d46855af232d440dab3ac7b",
+    "engine_eviction": "d1c3577e3089a248cbff9e87a8fa5ea428177adb19650af478b2673e7b1c7ad0",
+    "engine_patch": "ce5640d89f28f8ea1ab007c4356ce2ac5fda8d05304800e9b6466f7a6aa7eb5d",
+    "one_lookahead": "4301a659a934738c9efea1f800639fc35fded93f145095e476fe573295e60df4"
+  },
+  "own_files": {
+    "__init__.py": "ff43ec08a202e7932f4942294f813611b8a6d09cb5ed14f034bcb7e7b71020ec",
+    "core.py": "cb58e310fd8202cb74873ce1c48d58ce9092fe2c6da1cdd8eb52c34fc0e18f37",
+    "expected_inventory.json": "c1f431ab8de8185b1ce872bd75654d84ee85f3243322bbc68418cfa9e2d75bce",
+    "guards.py": "5ea2b51126a9bc3686c5295121ae60fb6ad3f15b710eeb6fe1542827be7784b4",
+    "layout.py": "8ab0c2bbc18e1ad22dab6b6d6cd859346b04a0e6d48c76b0f61ae5c20f72689d",
+    "provenance.py": "ac50ce8af5bee3a81d764a4f9722525d9cecb157d2b093e1c333ac50c00b9159",
+    "receipt_schema.py": "9505d971a01de268e06cc64abbfd2063d1c6c9c918cd3176a58ca99281061bd2",
+    "strict_receipt.py": "266462bc16b705baf821aa4ee706c71716fe4f344e50c90856fb4280da425995",
+    "worker.py": "85016d455ae69ab10ada23c20040468801836ece51ed67de18baa01a3ccab3ca"
+  },
+  "runtime_files": {
+    "model_executor/layers/mamba/abstract.py": "f0c1093395d3be1e7d26cbf20ffcfe877d5048212332c487d879c11bcdad5617",
+    "model_executor/layers/mamba/gdn/qwen_gdn_linear_attn.py": "81b4dcd0952492375c93bffc2cdf45f10b45ab5e117f2e1d949a147d144e64f0",
+    "models/qwen3_8_flash_next/common/qsa_cache.py": "5ef7ddee8934e27e05d43b905487da06619a45d32bcec41d49b71ea5e9d25732",
+    "models/qwen3_8_flash_next/nvidia/indexer_qsa.py": "e2f398a2fe29466c9681627651ccb5b8eb2b5980445c9e44b270ff45bcb61066",
+    "models/qwen3_8_flash_next/nvidia/model.py": "d900cd6fcacba18f460e00b3f018fbf36fbe6ecc310692b6adb1451f7f53cc17",
+    "models/qwen3_8_flash_next/nvidia/model_state.py": "f127380fcd884c1fb7b010a2c32065d55c319f65a1268c18ef21376e39ba8425",
+    "models/qwen3_8_flash_next/nvidia/qsa.py": "a75b7b0fb72761de2fb246ee28dd685054fe6f85112387c7c91efa3c65db52a6",
+    "v1/attention/backends/flash_attn.py": "6bcd9c496e25abffef257aebb8a5efd332343af3da302560596aa9b2e2815935",
+    "v1/attention/backends/gdn_attn.py": "fda86b96ab5daaf50bd02d022518779c220401dbedc7b28cf478f4c48e72d3d3",
+    "v1/core/kv_cache_coordinator.py": "9cd616a0f6bbd27776aa6bb44c7420c95574f9ffb5e254a8f355937642b8451b",
+    "v1/core/kv_cache_manager.py": "2d20c3d98845cfd8d88a2f66b8fc6402ea1fcfbee16879d2364a4a9e45b8fa47",
+    "v1/core/sched/async_scheduler.py": "e586a0ef3c6778be56a93e7f9bb712d4de9de6e7d7fe7e3e1d51dae83ecfc508",
+    "v1/core/sched/output.py": "51643386fab3a56b7747aa784ad657833966ebe823acee1f37222e33c1e5696a",
+    "v1/core/sched/scheduler.py": "c710f49e41e974e5b7b8f1cd2f5fb9722523f4da0165252e16351199ebd03124",
+    "v1/core/single_type_kv_cache_manager.py": "9ec6cbc0c78f30986f294439f02f57a9586ffbf2939d8f5c4fb968a642625ca2",
+    "v1/engine/core.py": "f4b1e07b6d91fac1549bc74a5c804e5a88793d663b5dc045c9e455db6550f5ad",
+    "v1/executor/multiproc_executor.py": "b911d837e167592acbfc36689808fc18c697d9624eaea527e56f6ea18b7a719d",
+    "v1/kv_cache_interface.py": "7452e823367960daf73520f80824aee0d5ed8ad2731d0404705695814d3bcff7",
+    "v1/worker/gpu/attn_utils.py": "663743e98ad85c0dcb6c53080dd88d58a0fa9c87fbb1ed18c546c1f825f53f7a",
+    "v1/worker/gpu/block_table.py": "358fe5502fd1ed1f6f3761cea7d4955b3ad9d6fdd4236d649aac40cc416b91db",
+    "v1/worker/gpu/buffer_utils.py": "51d37bde4f2f17d5aa9354faf35269ca1adde0eb16e73ae0d8b9860353ce57b7",
+    "v1/worker/gpu/input_batch.py": "3929c92e42ae90e4410bb4537dcbdcd171a662e44afc1189a9a3e19037a84410",
+    "v1/worker/gpu/mm/rope.py": "8d1de6397e64e657a70a6ed4fc9c0fb64e7ca71c470d559bc7b7647281581d94",
+    "v1/worker/gpu/model_runner.py": "f08ba0f5ad41c8b9d5145fb1fba115ffd97f35f1e59017602e235ec0823abce8",
+    "v1/worker/gpu/model_states/default.py": "ef4866fde8b3e0513a5d56f2fb80aabd809ac9e64d551175d9d9ca7c9cb7eec1",
+    "v1/worker/gpu/model_states/interface.py": "bdf320bfef2a97a08d1a92d89ab01713a852569bbaa20575a28d802e1a8688c5",
+    "v1/worker/gpu/model_states/mamba_hybrid.py": "2e65f1da0a440f11a784bd36afe9206a7a2f674d522c047b838ad604e4c6acc0",
+    "v1/worker/gpu/states.py": "99418f5df43ca612ded72609fee011620b065b2cab2f249ccb387096bf4ae71a",
+    "v1/worker/utils.py": "e9d4381d903f7345c9b2fa7e9facfdfe7de7c36c2488bf7e28398183282b7a07"
+  },
+  "schema": "arc3-lookahead-snapshot-sources-v1"
+}

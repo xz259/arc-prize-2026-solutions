@@ -1,0 +1,32 @@
+{
+  "label": "small-graph-slot-reuse-v1",
+  "client": "raw_concurrent_eviction_checks.py",
+  "client_sha256": "edb63e8044fedc1f99e31644e774f24954b1009d8e1f81a6866071394fcce434",
+  "helper_sha256": {
+    "raw_history_eviction_checks.py": "c01666f695a754ede7cd051671a630b5da164866f217ff178a438a325bdf14b8",
+    "raw_managed_eviction_checks.py": "039f65c352c37305a908367634db7dc55b916793adbddaa71bad9b1f3398ac3e",
+    "raw_gpu_checks.py": "f87484a7087df9fd225c3dfed23d9487314ea53b0a72ce6fafd7a9e6018fcd17"
+  },
+  "timeout_seconds": 420,
+  "argv": [
+    "--execute",
+    "--expected-mode",
+    "graph",
+    "--output",
+    "/workspace/arc3-inference/runs/persistent-efficiency-20260913-v5-batch-proof/small-graph-slot-reuse-v1",
+    "--expected-hostname",
+    "9b2fd24de2c6",
+    "--expected-boot-id",
+    "1bd8be96-58e2-4485-8fd1-c0e99dc12e74",
+    "--candidate-identity",
+    "/workspace/arc3-inference/runs/persistent-efficiency-20260913-v5-batch-proof/candidate-server.json",
+    "--engine-events",
+    "/workspace/arc3-inference/runs/persistent-efficiency-20260913-v5-batch-proof/engine-events.jsonl",
+    "--service-events",
+    "/workspace/arc3-inference/runs/persistent-efficiency-20260913-v5-batch-proof/service-events.jsonl",
+    "--max-seconds",
+    "300",
+    "--timeout",
+    "90"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "patch": "nvidia-ple-mtp-v1",
+  "files": [
+    {
+      "path": "vllm/models/qwen3_8_flash_next/nvidia/ple_layer.py",
+      "original_sha256": "a71144c1d36e06f22a2da1b1ada900076597fe5e824a911e7ada86249a0993e7",
+      "patched_sha256": "160d553ec81bae0990934cfe7c14f98d2d65b6ee3d5c5a85ff8421b7ddb17952"
+    },
+    {
+      "path": "vllm/model_executor/layers/quantization/modelopt.py",
+      "original_sha256": "3f3ca743fd3c66d72be92b7544591a8632f1aa422b73bb50c83e8a3281196e7d",
+      "patched_sha256": "039345f67a17fd4ddc22c243b6d452ebf6fdaee71790b8a0a549f1d58b2c6997"
+    },
+    {
+      "path": "vllm/models/qwen3_8_flash_next/nvidia/mtp.py",
+      "original_sha256": "7735cee47d0d1e4776bebd30d907e4a62160409ce4ef2d65611559f8d58af431",
+      "patched_sha256": "d4bbe292ead768e9e3b302a03fd07ecf979f5ea7d79f3a48598d50f15ffc9fd7"
+    }
+  ]
+}

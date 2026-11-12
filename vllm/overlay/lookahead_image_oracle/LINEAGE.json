@@ -1,0 +1,27 @@
+{
+  "component_extraction_delta": "optional expected three-axis MRoPE values and assertion message only; actual selected slices/copies are unchanged",
+  "native_validation": "not run; CPU construction/source proof only",
+  "new_sources": [
+    "image_metadata.py",
+    "encoder.py",
+    "closed.py"
+  ],
+  "parent_manifest_sha256": "375562358e561679f718696b9de6dd9bdf74a73fe093f4498f02674c61e7d6b6",
+  "parent_package": "lookahead_snapshot_v2",
+  "parent_source_manifest_canonical_sha256": "8b85f80225ff7ea57ee2504ed4596f1e85c270106b91b9e5ecbee2a15c3eef2c",
+  "preserved_cache_functions": [
+    "tensor_identity",
+    "check_tensor",
+    "byte_copy",
+    "cache_bindings"
+  ],
+  "schema": "arc3-lookahead-image-oracle-v1-lineage",
+  "source_manifest_canonical_sha256": "63f1df882f306f11fad7ac9fdff1697b0af5672f0edce5ecb4dbcf0615b6c281",
+  "stage_package_name": "lookahead_image_oracle",
+  "unchanged_runtime_sources": [
+    "layout.py",
+    "provenance.py",
+    "strict_receipt.py",
+    "expected_inventory.json"
+  ]
+}

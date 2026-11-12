@@ -1,0 +1,8 @@
+{
+  "adapter_manifest_sha256": "38678b8c0716191a34d61b2b83a12929133773590d9dd4d696e4b6c29cd2f6f5",
+  "cpu_tests": 22,
+  "independent_reviewer": "/root/nvfp4_plan_review",
+  "skipped": 0,
+  "source_manifest_sha256": "44881de5e719928e0c3bfe69b7df06efb459a0d2188f0f3d6d0b3beae9c67e8c",
+  "status": "source-reviewed; runtime serving unexecuted"
+}

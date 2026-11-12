@@ -1,0 +1,21 @@
+{
+  "patch": "qsa-moe-diagnostics-v2",
+  "files": [
+    {
+      "path": "vllm/models/qwen3_8_flash_next/nvidia/ops/qsa.py",
+      "original_sha256": "c4ffe3674cafa0ce2dabc39a39f0ddbb4b594bc358ad210ffce9d04383350c7f",
+      "patched_sha256": "f7815dcce49ffecd50544a58fffaea614c9ed779bb2aa57617451893bda10fef"
+    },
+    {
+      "path": "vllm/model_executor/layers/fused_moe/experts/flashinfer_cutlass_moe.py",
+      "original_sha256": "52887cec5fe628e0a4e7793deb546b40f6c29f7362b3b436c10ca36934ab9826",
+      "patched_sha256": "19017887fb61bf471d0709610e7231bd443f16ef5a68ee474b81f570ac99a53e"
+    },
+    {
+      "path": "flashinfer/fused_moe/core.py",
+      "original_sha256": "1fc7f2b942b253837e554b2a4c128e196a19a48679c4a11cdd7677e0cccfd5ca",
+      "patched_sha256": "9c5f0bb8b9d36586d0c16cd0f7ca837d5b75f06a5e74a1da75e2e27b3091c1c8"
+    }
+  ],
+  "helper_sha256": "863cf72445039038780cb0224325b193e0bcc02cd0535142e95ce63db1ff2c13"
+}

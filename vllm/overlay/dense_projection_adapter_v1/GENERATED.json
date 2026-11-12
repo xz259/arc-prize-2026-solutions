@@ -1,0 +1,58 @@
+{
+  "generated/out_n25.py": {
+    "sha256": "6d203a9f8b2327c9ada6baad545939fcee2ee54f1838459b7ccb236f398ea32a",
+    "input_shape": [
+      25,
+      6144
+    ],
+    "weight_shape": [
+      2560,
+      6144
+    ],
+    "fxgraph_sha256": "f3bafb272b6bedca5de14ce8e7c2b3dc7d95a79b84ccc6dc3f908c1652ba2c20",
+    "source_artifact": "inference_stack/experiments/nvfp4_optimization_20260914/evidence/dense-autotune-and-fi-control-20260915-v1/runs/dense-autotune-results-v2/inductor-cache/fxgraph/6n/f6nw6va23xuoppc6rykaiku6yrs3adfhjoozo5dtnsuph3fct3fb/6o5pwjzlnpw4uxpbjtuopqvt3r6zlj43qtgmnxb7scgbmuv2fqq",
+    "source_extracted_without_unpickling": true
+  },
+  "generated/out_n30.py": {
+    "sha256": "b1ea22bcc059c69b325e9ab0eb70b62ce8ddabe9d5a8f96a2060ada5a95c963c",
+    "input_shape": [
+      30,
+      6144
+    ],
+    "weight_shape": [
+      2560,
+      6144
+    ],
+    "fxgraph_sha256": "b717a6e1d67418062bd7e07a941b7e1c5c7427c8303d8b2df706ed2da43e18cc",
+    "source_artifact": "inference_stack/experiments/nvfp4_optimization_20260914/evidence/dense-autotune-and-fi-control-20260915-v1/runs/dense-autotune-results-v2/inductor-cache/fxgraph/nm/fnmeqlei6snw5hup6n6ehapxd7gz4q44xtu6vsuvwt5dno3cknhs/w4l2nyowoqmamk6x4b5jig36drohij6iga6ywlpxa3ws3jb6ddg",
+    "source_extracted_without_unpickling": true
+  },
+  "generated/qkvz_n25.py": {
+    "sha256": "bdf070f97eadbb82ea084434d2b7d07cb905706ef752a5dbb3b76107ea1934c1",
+    "input_shape": [
+      25,
+      2560
+    ],
+    "weight_shape": [
+      16384,
+      2560
+    ],
+    "fxgraph_sha256": "ce7449dbc3204ffea8ede1bc9c26f1e209fc29d660b44b1a74ec0d7a1fe10dfd",
+    "source_artifact": "inference_stack/experiments/nvfp4_optimization_20260914/evidence/dense-autotune-and-fi-control-20260915-v1/runs/dense-autotune-results-v2/inductor-cache/fxgraph/oz/fozel4xd6x6xnnhhtjvll5s4zy27spij7kqysqed2psubzyumn3w/zz2etw6debh75khn4g6jyjxr4ie7ykowmc2ewgtu5qgxuh7bbx6",
+    "source_extracted_without_unpickling": true
+  },
+  "generated/qkvz_n30.py": {
+    "sha256": "4528d3321066884402fcbab6a094071f69228ed0d7ff340721704bc88e270f50",
+    "input_shape": [
+      30,
+      2560
+    ],
+    "weight_shape": [
+      16384,
+      2560
+    ],
+    "fxgraph_sha256": "ef5420fcd9808f088eded4a679de8c0ce501526ba6e7eaa05efbb069eb5d8df2",
+    "source_artifact": "inference_stack/experiments/nvfp4_optimization_20260914/evidence/dense-autotune-and-fi-control-20260915-v1/runs/dense-autotune-results-v2/inductor-cache/fxgraph/i5/fi547jtxyvtrgx4yxk5cp2mejumicnyvgnjtsxrtwoogunq26bhh/55kcb7gzqchqrdw62sthtxumbtsqcutlu3t6vic67oygt225rxz",
+    "source_extracted_without_unpickling": true
+  }
+}

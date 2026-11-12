@@ -1,0 +1,15 @@
+{
+  "groups": {
+    "image_and_encoder_release": 12,
+    "nhd_and_byte_extraction": 5,
+    "scalar_receipt": 10,
+    "scalar_snapshot": 15
+  },
+  "native_executed": false,
+  "passed": true,
+  "peer_review": "nvfp4_plan_review independently passed 42 tests; final initializer-docstring and fixture-relative-path deltas are nonalgorithmic",
+  "schema": "arc3-image-oracle-cpu-validation-v1",
+  "skips": 0,
+  "test_log_sha256": "2eef2482e7b8a1d459bf88d2353a568b83113dc19b949dc2f0ca6b1af7b5f341",
+  "tests": 42
+}

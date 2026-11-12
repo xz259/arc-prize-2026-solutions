@@ -1,0 +1,52 @@
+{
+  "amd64_manifest_digest": "sha256:0aea30240f3e3d9ffae8526643950e170eb5fa07fc427016a9dd90892afa2aa3",
+  "config_digest": "sha256:bd995759b5b8ac51062e04c9e4d7c91c382d1ba377bb787e24dca2ccb39925e9",
+  "image": "vllm/vllm-openai:qwen38-flash-next",
+  "index_digest": "sha256:fc120ece0a388cc0aa1caad4a9f1cd92113484ab7ec2fd0efadd62585be05bf8",
+  "selected_compressed_bytes": 7906697104,
+  "selected_layers": [
+    {
+      "digest": "sha256:f4f325a97c3e4739640b0e472a818bb299e7ce8e585bdbfe5586e9d3b5a2c475",
+      "file": "layer-8-f4f325a97c3e4739640b0e472a818bb299e7ce8e585bdbfe5586e9d3b5a2c475.tar.gz",
+      "index": 8,
+      "sha256": "f4f325a97c3e4739640b0e472a818bb299e7ce8e585bdbfe5586e9d3b5a2c475",
+      "size": 1374796713
+    },
+    {
+      "digest": "sha256:a5881cf32fc46f24318a6fc7015ccae863706075d4434d186b8b1b4e5bafb36e",
+      "file": "layer-17-a5881cf32fc46f24318a6fc7015ccae863706075d4434d186b8b1b4e5bafb36e.tar.gz",
+      "index": 17,
+      "sha256": "a5881cf32fc46f24318a6fc7015ccae863706075d4434d186b8b1b4e5bafb36e",
+      "size": 4634843373
+    },
+    {
+      "digest": "sha256:692ea0d28a87e9cea6db254c830f650f29804522045c9201f8ea63f30471b33b",
+      "file": "layer-18-692ea0d28a87e9cea6db254c830f650f29804522045c9201f8ea63f30471b33b.tar.gz",
+      "index": 18,
+      "sha256": "692ea0d28a87e9cea6db254c830f650f29804522045c9201f8ea63f30471b33b",
+      "size": 1511319261
+    },
+    {
+      "digest": "sha256:651e9c6638c77d15bf671d9264badcba80ea551f84109de486427b87d2ddbf75",
+      "file": "layer-21-651e9c6638c77d15bf671d9264badcba80ea551f84109de486427b87d2ddbf75.tar.gz",
+      "index": 21,
+      "sha256": "651e9c6638c77d15bf671d9264badcba80ea551f84109de486427b87d2ddbf75",
+      "size": 61571140
+    },
+    {
+      "digest": "sha256:10dce885652a53a2e644a75d256b90830663330988b8599c3c0e56cd6c8a4675",
+      "file": "layer-24-10dce885652a53a2e644a75d256b90830663330988b8599c3c0e56cd6c8a4675.tar.gz",
+      "index": 24,
+      "sha256": "10dce885652a53a2e644a75d256b90830663330988b8599c3c0e56cd6c8a4675",
+      "size": 309686893
+    },
+    {
+      "digest": "sha256:49a63ac9d116f92e5a8b006ae5665b940fcbc3d22d53aa7c01a3753ef341c53e",
+      "file": "layer-27-49a63ac9d116f92e5a8b006ae5665b940fcbc3d22d53aa7c01a3753ef341c53e.tar.gz",
+      "index": 27,
+      "sha256": "49a63ac9d116f92e5a8b006ae5665b940fcbc3d22d53aa7c01a3753ef341c53e",
+      "size": 14479724
+    }
+  ],
+  "selection_reason": "Pinned CUDA 13.0 toolchain, Python/CUDA dependencies, FlashInfer cache, multimodal runtime extras, exact vLLM install, and expert-parallel kernels"
+}

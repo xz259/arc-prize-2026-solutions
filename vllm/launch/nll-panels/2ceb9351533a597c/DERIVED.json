@@ -1,0 +1,31 @@
+{
+ "source": "/workspace/arc3-inference/runs/stage0-reference-20260919-v1/nll-panel-cold/panel.json",
+ "source_sha256": "e5c929c12a430f665bb186886d18de2b19cbe60faf86a3a5b540834260f7888f",
+ "changed": [
+  "model"
+ ],
+ "source_model": {
+  "model": "/workspace/models/Qwen3.8-Flash-Next-NVFP4",
+  "revision": "fc694b54fb0174e0913e6adf86691ef85a4ead47",
+  "config_sha256": "deef67a61f3311faf051b23dc4192f442c7fee4f9cd2f38cbcbe4da55c763a80",
+  "quantization": "MIXED_PRECISION",
+  "shards": 11,
+  "shard_bytes": 132680249378
+ },
+ "model": {
+  "model": "/workspace/models/Qwen3.8-Flash-Next-W4A16-intel-ple19",
+  "revision": null,
+  "config_sha256": "0fabfa21fab8bfe69f02234f7ae8df4ed91b785fca2e22011c1230f6a07e5329",
+  "quantization": "auto-round",
+  "shards": 35,
+  "shard_bytes": 181196006784,
+  "target_view": {
+   "base_source": "/workspace/models/Qwen3.8-Flash-Next-NVFP4",
+   "kind": "intel-ple19",
+   "checkpoint": "/workspace/models/Qwen3.8-Flash-Next-W4A16-AutoRound-4c67bf68",
+   "rewritten": null,
+   "change": "model-00016-of-00017.safetensors (the PLE table, 128 tensors) split into 19 files of <= 7 tensors (reshard_ple.py; byte-exact, sha256-verified)",
+   "resharded_from": "/workspace/models/Qwen3.8-Flash-Next-W4A16-intel"
+  }
+ }
+}

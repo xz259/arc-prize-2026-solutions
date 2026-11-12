@@ -1,0 +1,31 @@
+{
+  "build_result_sha256": "745b258e0256bbec190b792cc520ff543a7920ceffeb5ce548247a8b57770cea",
+  "capture_sizes": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    24,
+    25,
+    30,
+    32
+  ],
+  "compile_sizes": [],
+  "library_sha256": "298d6d1a855908bee50ec9c1b1c8b8ee0c522ded998b12da53f28fcc3e2e178d",
+  "local_only": true,
+  "mode": 3,
+  "modified_parent_files": [
+    "launch_scaling.py",
+    "optimization-config.json"
+  ],
+  "normal_compilation_preserved": true,
+  "operator_receipt_sha256": "b17aa29b3a7dbd1cf0a142247dd4708ab29d61e74d453b31550e6e3f71be994d",
+  "parent": "baseline_server_v1",
+  "parent_manifest_sha256": "7e906925098af45008829b78ab2aa2bfb95a03d03e25e0e393c27a0b0a47dcc4",
+  "phase": "nvfp4-private-moe-mode3-20260914-v1",
+  "production_promoted": false,
+  "route_eligibility_sha256": "322d4725b735d11b94a8a569bd39c2ee2e080a91a39bc0eda186f37979de6707",
+  "runtime_or_numeric_sources_modified": false,
+  "schema": "arc3.private-moe-serving.lineage.v1"
+}

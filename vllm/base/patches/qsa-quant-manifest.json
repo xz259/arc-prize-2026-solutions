@@ -1,0 +1,33 @@
+{
+  "patch": "qsa-quantized-main-v2",
+  "files": [
+    {
+      "path": "vllm/models/qwen3_8_flash_next/nvidia/qsa.py",
+      "original_sha256": "748addc85efaa8f7df940d1245bc900192f92e1f17af8fa774625758600751cb",
+      "patched_sha256": "a75b7b0fb72761de2fb246ee28dd685054fe6f85112387c7c91efa3c65db52a6"
+    },
+    {
+      "path": "vllm/models/qwen3_8_flash_next/common/qsa_cache.py",
+      "original_sha256": "e3460b06cd7ed309e47ad5dfd3d4250890539b912385503133bd98a003f73ba8",
+      "patched_sha256": "5ef7ddee8934e27e05d43b905487da06619a45d32bcec41d49b71ea5e9d25732"
+    }
+  ],
+  "helpers": {
+    "arc3_qsa_cache.py": "46d3ac1527fb064c7ede79db5bd004fe32542ab21dadf198b6a01534228fc581",
+    "arc3_qsa_profiles.py": "85657cb0b6899f770202a9db9bcaf1bded2d48abaad5faf501b216aee72e2ea1",
+    "arc3_qsa_quant.py": "c9d8f5281481557ce7b4716c98aaa0c569988ec01047c9bee49c6b91b4d71e19",
+    "arc3_qsa_nvfp4.py": "2c890032c492c7cb312fee369a35de99ae0451921d46855af232d440dab3ac7b",
+    "arc3_qsa_nvfp4_attention.py": "db0fa7b05ee77cdcd252350175124c05491016d14d17af5a9cbe5278cbdee002",
+    "arc3_qsa_fp8_scale_placement.py": "2daf399911f510e9aea2b6fc735db9dd4080159d108ca74d165d4f3a285697bd"
+  },
+  "fp8_readers": [
+    "baseline",
+    "scale_placement"
+  ],
+  "formats": [
+    "fp8_e4m3",
+    "fp8_e5m2",
+    "nvfp4"
+  ],
+  "scope": "Main QSA K/V only; scales included in pages; unchanged indexer and GDN"
+}

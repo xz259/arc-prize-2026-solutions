@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "scope": "192 actual GPU D2H copy/optional-context cases; no model or graph-deadlock claim",
+  "records": [
+    {
+      "source": "connector_original.py",
+      "cases": 96,
+      "exact": true,
+      "mean_launch_us": 18.24721888018151
+    },
+    {
+      "source": "connector.py",
+      "cases": 96,
+      "exact": true,
+      "mean_launch_us": 104.40383630339056
+    }
+  ]
+}

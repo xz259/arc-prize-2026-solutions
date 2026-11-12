@@ -1,0 +1,19 @@
+{
+  "LINEAGE.json": "bfa9b226b8ecd963bce133f12652a7196e2a04d3123df4f009df87382bb35317",
+  "LOCAL_TESTS.log": "5e84fb406fb5c2e5a67198fabc16a46104e3ee3e5bf39599cd889460b500693f",
+  "README.md": "8f5e701bfb93c501cd69c9bcc54f3608dfab8302cc4ec13b22e5e87186e0a863",
+  "SOURCE_MANIFEST.json": "a06cbbe6cd9f359db26fab88ad506890cd5ffd876416354e6f4026b2a20a39bd",
+  "VALIDATION.json": "23a68ba24573e621f86fe1c2f3883c25f782dafe5ec4152bd86e1460f72e0513",
+  "__init__.py": "ff43ec08a202e7932f4942294f813611b8a6d09cb5ed14f034bcb7e7b71020ec",
+  "core.py": "cb58e310fd8202cb74873ce1c48d58ce9092fe2c6da1cdd8eb52c34fc0e18f37",
+  "expected_inventory.json": "c1f431ab8de8185b1ce872bd75654d84ee85f3243322bbc68418cfa9e2d75bce",
+  "fixtures/worker_v1.py": "c4666ffa4ef0c87c8c8f118de929f87565e04a1e9d29f6feebc9281b22f8cc7a",
+  "guards.py": "5ea2b51126a9bc3686c5295121ae60fb6ad3f15b710eeb6fe1542827be7784b4",
+  "layout.py": "8ab0c2bbc18e1ad22dab6b6d6cd859346b04a0e6d48c76b0f61ae5c20f72689d",
+  "provenance.py": "ac50ce8af5bee3a81d764a4f9722525d9cecb157d2b093e1c333ac50c00b9159",
+  "receipt_schema.py": "9505d971a01de268e06cc64abbfd2063d1c6c9c918cd3176a58ca99281061bd2",
+  "strict_receipt.py": "266462bc16b705baf821aa4ee706c71716fe4f344e50c90856fb4280da425995",
+  "test_layout_v2.py": "d43458779b1d3c2cb1e94ecfc2fe7292654bff4709bd88ec8df745af2855fcb6",
+  "test_snapshot.py": "be97bbf76e808e1e820c6cb6eb29c0308a1c6f82a583ab5b428b4c8599787e96",
+  "worker.py": "85016d455ae69ab10ada23c20040468801836ece51ed67de18baa01a3ccab3ca"
+}

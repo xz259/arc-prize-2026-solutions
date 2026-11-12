@@ -1,0 +1,7 @@
+{
+  "source": "inference_stack/evidence/determinism-20260909/upstream-topk-55122/persistent_topk.cuh",
+  "source_sha256": "aa48de444e180069c79295b732c33f4e0de8ec24457f1964ac35d3de88ee9cb1",
+  "commit": "7cfd04a395fab32d6ee3364327df297a393f35d2",
+  "pull_request": "https://github.com/vllm-project/vllm/pull/55122",
+  "adaptation": "Retain verbatim single-CTA exact selector and required helpers; independent small launcher, no cooperative inter-CTA path."
+}

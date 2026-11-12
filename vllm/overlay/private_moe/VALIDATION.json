@@ -1,0 +1,14 @@
+{
+  "arithmetic_or_runtime_edits": false,
+  "cpu_tests": 18,
+  "independent_reviewer": "/root/nvfp4_plan_review",
+  "producer_runtime_checks": {
+    "direct": 210,
+    "graph": 50,
+    "passed": true,
+    "receipt_sha256": "322d4725b735d11b94a8a569bd39c2ee2e080a91a39bc0eda186f37979de6707"
+  },
+  "skipped": 0,
+  "source_manifest_sha256": "38678b8c0716191a34d61b2b83a12929133773590d9dd4d696e4b6c29cd2f6f5",
+  "status": "locally-tested-and-independently-reviewed; serving runtime unexecuted"
+}

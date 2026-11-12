@@ -1,0 +1,9 @@
+{
+  "source": "inference_stack/experiments/gameplay_profile_20260913/candidate",
+  "changed_files": [
+    "launch_scaling.py",
+    "optimization-config.json"
+  ],
+  "source_overlay_sha256": "c71d018586b6c6089cf82500b574f8ead8e661db4986d25d13fe57a640b5e7ca",
+  "change_scope": "New host/boot pin, new label and inactive bounded Torch profiling configuration. All server behavior modules unchanged."
+}

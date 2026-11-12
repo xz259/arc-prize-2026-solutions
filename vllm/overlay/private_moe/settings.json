@@ -1,0 +1,57 @@
+{
+  "autotuner_source_sha256": "d1e9ebc15f3f55e81167a7d1be3fcee7be8122d901a00acaa635e6fbde2900f3",
+  "baseline_cache": "/workspace/arc3-inference/cache/runtime/vllm/flashinfer_autotune_cache/0.6.17/120f/152f76afe23823c17f69174979b34ec2ee98f442ccbfbf3c1604357be93dc8cb/autotune_configs.json",
+  "baseline_cache_sha256": "3ab341b63fa74c88c1563fe6c2cc98f015db0cb077a211e417702c1b0246e6a5",
+  "baseline_config_hash": "14b976e6f3",
+  "baseline_env_hash": "5650c94f36317500102124f5e00b2fbd13b1ae2681c74c7e57f176c25c79812d",
+  "baseline_namespace": "152f76afe23823c17f69174979b34ec2ee98f442ccbfbf3c1604357be93dc8cb",
+  "baseline_tail_sha256": "9a1cbfa846df7dc3ae830a33e306faeed032529ca8d19d86d96b8a3d6fbad938",
+  "expected_boot_id": "4c1eccbd-6c61-455d-b472-8a9de7d4db6c",
+  "expected_hostname": "263819044b0b",
+  "flashinfer_root": "/workspace/arc3-inference/runtime/base/usr/local/lib/python3.12/dist-packages/flashinfer",
+  "mode": 3,
+  "operator_evidence": {
+    "actual-layer23/private-layer23-n25.json": "b17aa29b3a7dbd1cf0a142247dd4708ab29d61e74d453b31550e6e3f71be994d"
+  },
+  "operator_evidence_root": "/workspace/arc3-inference/runs/moe-private-actual-owner-n25-layer23-20260914-v1",
+  "prepared_sha256": "61f2c56cc5376d0ba53279794355001e7cf3dd86c2ee81989bb1d2b520494448",
+  "private": {
+    "build_result": "/workspace/arc3-inference/runs/moe-private-build-v4/owner-resume-v1/BUILD_RESULT.json",
+    "build_result_sha256": "745b258e0256bbec190b792cc520ff543a7920ceffeb5ce548247a8b57770cea",
+    "calls_per_graph": 4,
+    "execute": true,
+    "input_boundary": "bf16",
+    "max_seconds": 900,
+    "max_workspace_bytes": 2147483648,
+    "prepared_root": "/workspace/arc3-inference/runs/moe-private-build-v4",
+    "private_library": "/workspace/arc3-inference/runs/moe-private-build-v4/build/arc3_private_moe_sm120_d0fa0e709af46e68/arc3_private_moe_sm120_d0fa0e709af46e68.so",
+    "private_library_sha256": "298d6d1a855908bee50ec9c1b1c8b8ee0c522ded998b12da53f28fcc3e2e178d",
+    "replays": 4,
+    "rounds": 8
+  },
+  "route_eligibility": {
+    "path": "/workspace/arc3-inference/runs/moe-topk-admission-result-20260914-v1/result.json",
+    "sha256": "322d4725b735d11b94a8a569bd39c2ee2e080a91a39bc0eda186f37979de6707"
+  },
+  "router_sources": {
+    "model_executor/layers/fused_moe/fused_moe_method_base.py": "ce79bed3cc0fa5d37d51a80b96bbe9c297e87a24525b4e0343934bb624f258e1",
+    "model_executor/layers/fused_moe/prepare_finalize/no_dp_ep.py": "80d185e8d519da8ff7266fe37554640465672f54426f1bebd0131d62f4f67ec3",
+    "model_executor/layers/fused_moe/router/base_router.py": "47fa2324bcd9b6ebdc138d69ae6b6ecc0f2463d34bda8c5988bdb0a2a76d3fae",
+    "model_executor/layers/fused_moe/router/fused_moe_router.py": "f182f30712983f61815f8df947af597277d660cd2891066fcb13789d55f7353e",
+    "model_executor/layers/fused_moe/router/fused_topk_router.py": "1c80f4af4d781fd66b12aa6a7a0fd30082bc521df40f1252987a8ac4c0bef51c",
+    "model_executor/layers/fused_moe/runner/moe_runner.py": "a19ecf2417c80b93c0fe5594e74528f686665847732196f9b29ef967b38110b0",
+    "model_executor/models/qwen3_next.py": "28aaeee979d75d8776ceb39b39b1e13a8a3930a1ed26defce5632c599e70f05e"
+  },
+  "runtime_root": "/workspace/arc3-inference/runtime/base/usr/local/lib/python3.12/dist-packages/vllm",
+  "schema": "arc3.private-moe-serving.settings.v1",
+  "targets": {
+    "flashinfer.fused_moe.core": {
+      "path": "/workspace/arc3-inference/runtime/base/usr/local/lib/python3.12/dist-packages/flashinfer/fused_moe/core.py",
+      "sha256": "9c5f0bb8b9d36586d0c16cd0f7ca837d5b75f06a5e74a1da75e2e27b3091c1c8"
+    },
+    "vllm.model_executor.warmup.kernel_warmup": {
+      "path": "/workspace/arc3-inference/runtime/base/usr/local/lib/python3.12/dist-packages/vllm/model_executor/warmup/kernel_warmup.py",
+      "sha256": "6cfa71ce87037d2c51fbb1230dff6b8d40f40ad103ffbb18a24037dee89e3785"
+    }
+  }
+}

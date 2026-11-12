@@ -1,0 +1,42 @@
+{
+  "schema": "image-admission-base-v1",
+  "source_root": "inference_stack/experiments/host_recovery_20260916/evidence/lookahead-scalar-v2/server",
+  "files": {
+    "one_lookahead.py": "4301a659a934738c9efea1f800639fc35fded93f145095e476fe573295e60df4",
+    "protocol.py": "65625fb8f7107d51ce94d9363c013f141556a57c428c4d20b3e3737b345ee46d",
+    "persistent_endpoint.py": "d8fc9d21fd0aea486e4a9258daf8b968062f3da26abe0bf2187824d3c8e0829e",
+    "engine_patch.py": "ce5640d89f28f8ea1ab007c4356ce2ac5fda8d05304800e9b6466f7a6aa7eb5d"
+  },
+  "fixtures": {
+    "blue.png": "18bc5210b7f915f3cefb09d1cf4e99b2967df35def15b631730cb0eaac00416f",
+    "red.png": "ab7c4352b565c5b397689f406d835d56abea6fcd1a076fa6ab3dae0034864d23"
+  },
+  "model_metadata": {
+    "config.json": "deef67a61f3311faf051b23dc4192f442c7fee4f9cd2f38cbcbe4da55c763a80",
+    "preprocessor_config.json": "27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516",
+    "processor_config.json": "d89ef49ce9cd37fbf510158e13c1ef063d9286411c1ec9049932dbe0487143b1",
+    "tokenizer_config.json": "b11349aafa7cdc6a320767cf7ceb29ed82f7eda5d65e8e0819e76f0ce947bf27",
+    "tokenizer.json": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3"
+  },
+  "runtime_sources": {
+    "renderers/base.py": "a358921359b241df2e5c08b547897b874a0eb5c73bc9051293bab800511aeedb",
+    "renderers/online_renderer.py": "0135c6ba5dcd837f605ac111ccfb84e391096df9fdbc853b0580ff0a0de30d43",
+    "renderers/hf.py": "b0e83d95fc0aca6e248e28aa727d795bd74da681296634b15a0a0cf68a9feb48",
+    "multimodal/cache.py": "47343ccba0b59f4d47a0780668312e2f71abfa6f23375c7bf59ca251304ca1d1",
+    "multimodal/processing/processor.py": "9f76ea12806f7e79c8015fdbd8a0f00f6a4e77c6922139bad9e449171133c7a1",
+    "v1/engine/input_processor.py": "f9a7946a16acc2374ff2bdfc22f212cb43461d9ef4d99c5e19a536339f11212f",
+    "v1/engine/core.py": "f4b1e07b6d91fac1549bc74a5c804e5a88793d663b5dc045c9e455db6550f5ad",
+    "renderers/registry.py": "a08f893773e22d4b249726f2cec930ea70eb508f32a4903bacffba37b07fdf5b",
+    "multimodal/registry.py": "e3eea9b52dc6868791627bd90639c74e0381e1b26f7b6138acde4a8f0bf02330",
+    "engine/arg_utils.py": "75636c2a7903738f0e8954394fcedfced318d30a41598a8aca533be2ea2c38c4",
+    "config/model.py": "17c687232886184f0390f38fc1c2c8ae078eaf24ebd1960a6b0c6a0669a35a98",
+    "entrypoints/openai/cli_args.py": "5b6c1c61bc9d25c703086b92a3e0040d21cc054305d9a0fbe69767dfd26af646",
+    "entrypoints/cli/serve.py": "1becda2116e54732ae3f049d4660088bf8fb103f6dcc13ccb207813c8eab6bf9",
+    "tokenizers/registry.py": "9515c9d30b5b87e1706d1905c51dfac45ff75eb72bb34957181b7907dc29ca73",
+    "config/multimodal.py": "310ed83a80f6ce4718bb0f02d3b07a2217061ef5eed756c784d26db939545add",
+    "utils/argparse_utils.py": "afd3717476e1eebf3e5b086c6da31645a989a69375e6f426cc21a7b4bfea1336"
+  },
+  "runtime_fixtures": {
+    "runtime_cache.py": "47343ccba0b59f4d47a0780668312e2f71abfa6f23375c7bf59ca251304ca1d1"
+  }
+}

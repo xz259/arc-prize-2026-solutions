@@ -1,0 +1,5 @@
+[vllm.general_plugins]
+arc3_persistent_engine = lookahead_bootstrap:install
+
+[vllm.endpoint_plugins]
+arc3_persistent = persistent_plugin:create_plugin

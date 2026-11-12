@@ -1,0 +1,30 @@
+{
+  "capture_sizes": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    24,
+    25,
+    30,
+    32
+  ],
+  "eager": 0,
+  "fused_control": 1,
+  "gameplay_profile": 1,
+  "graph_mapping": 1,
+  "graph_trace": 1,
+  "identity_lookup": 1,
+  "label": "host-recovery-lookahead-gameplay-20260916-v1",
+  "max_sessions": 30,
+  "page_plan_reuse": 1,
+  "pin_v2_runner": 1,
+  "profile": 1,
+  "resume_profile": 1,
+  "single_batch": 1,
+  "skip_unchanged_scalars": 1,
+  "validated_context_copy": 1,
+  "verify_allocator": 0,
+  "verify_bytes": 0
+}

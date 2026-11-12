@@ -1,0 +1,106 @@
+{
+ "schema": "swap70-index-v1",
+ "name": "swap70 placeholder (simalloc69 interim rab69 OFF fit)",
+ "status": "placeholder",
+ "written_utc": "2026-10-19T19:13:43Z",
+ "source": {
+  "from": "/workspace/kvring_dev/simalloc69/results/swap_policy_constants_rab.json",
+  "md5": "15c5f1420fe99bb6b63269269c8908a4",
+  "its_schema": "simalloc69.swap_policy/0.1 (provisional; key names to be mapped onto swap70's schema)",
+  "its_written_utc": "2026-10-19T18:37:23Z",
+  "fit_runs": [
+   "rab69s16off01"
+  ],
+  "note": "a placeholder for the scaffolding tests and dry runs; the simalloc69 builder emits the fitted file"
+ },
+ "hazard": {
+  "bin_edges_tokens": [
+   0.0,
+   25000.0,
+   50000.0,
+   75000.0,
+   100000.0,
+   150000.0,
+   200000.0,
+   250000.0,
+   300000.0,
+   400000.0,
+   500000.0,
+   700000.0,
+   1000000000.0
+  ],
+  "log_hazard_per_token": [
+   -10.839222758573248,
+   -10.600142240732394,
+   -10.691166878306078,
+   -10.840578357196568,
+   -11.07769804518363,
+   -11.509767780774881,
+   -11.979508149148735,
+   -12.022481988630132,
+   -11.80059227986653,
+   -11.54028340618639,
+   -11.810685479864238,
+   -12.12444699283324
+  ],
+  "beta_log_level": -0.4082604946762755,
+  "beta_pace": -0.564555886236841,
+  "med_clock_tokens": 40434.0
+ },
+ "value": {
+  "mode": "completion",
+  "s_level": 87.0,
+  "score_cap": 115.0,
+  "b_hat_prior_actions": 50.0,
+  "actions_per_token_prior": 0.00125,
+  "rate_prior_tokens": 20000,
+  "chain_horizon_tokens": 200000
+ },
+ "index": {
+  "horizons_tokens": [
+   50000,
+   100000,
+   200000,
+   400000
+  ],
+  "min_tokens_left": 5000,
+  "default_n_levels": 7,
+  "integration_step_tokens": 10000
+ },
+ "switch": {
+  "switch_cost_tokens": {
+   "mean": 29544.5,
+   "q50": 25542.5
+  },
+  "context_loss_hazard_factor": {
+   "policy": 0.93,
+   "measured": 0.9261348174453766
+  },
+  "notes_turn_tokens": {
+   "q50": 1333.5
+  }
+ },
+ "lane": {
+  "tps0": 56.94444444444444,
+  "decline_per_h": 0.027,
+  "floor": 0.5
+ },
+ "decision": {
+  "soft_caps": true,
+  "admission": "index",
+  "swap_out": false,
+  "value_mode": "completion",
+  "swap_out_if_enabled": {
+   "margin": 2.0,
+   "hysteresis_tokens": 200000,
+   "min_time_left_s": 1800,
+   "margin_abs": 0.0,
+   "cost_weight": 0.0,
+   "expected_wait_s": 0.0,
+   "park_new_only": false,
+   "add_reorient_time": false
+  },
+  "check_every_tokens": 10000,
+  "overcap_admission": "only when no other kind of game waits"
+ }
+}

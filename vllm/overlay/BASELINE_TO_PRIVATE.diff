@@ -1,0 +1,26 @@
+--- baseline/launch_scaling.py
++++ private/launch_scaling.py
+@@ -56,6 +56,12 @@
+     os.environ['VLLM_USE_V2_MODEL_RUNNER']='1'
+ sys.path.insert(0, str(ROOT))
+ os.environ['PYTHONPATH'] = str(HERE)+':'+str(ROOT)+':'+os.environ['PYTHONPATH']
++# Install only in fresh child interpreters; normal runtime wrapper is already active.
++ADAPTER = HERE/'private_moe'
++os.environ.update(ARC3_PRIVATE_MOE_SERVING='1',
++    ARC3_PRIVATE_MOE_SETTINGS=str(ADAPTER/'settings.json'),
++    ARC3_PRIVATE_MOE_RECEIPTS=str(HERE/'private-startup'))
++os.environ['PYTHONPATH'] = str(ADAPTER/'bootstrap')+':'+str(ADAPTER)+':'+os.environ['PYTHONPATH']
+ import minimal_inference as m
+ 
+ TEMPLATE = ROOT/'runs/reasoning-continuation-tools-20260911-v1/prolong_chat_template_v2.jinja'
+--- baseline/optimization-config.json
++++ private/optimization-config.json
+@@ -17,7 +17,7 @@
+     30,
+     32
+   ],
+-  "label": "nvfp4-optimization-baseline-20260914-v1",
++  "label": "nvfp4-private-moe-mode3-20260914-v1",
+   "fused_control": 1,
+   "identity_lookup": 1,
+   "validated_context_copy": 1,

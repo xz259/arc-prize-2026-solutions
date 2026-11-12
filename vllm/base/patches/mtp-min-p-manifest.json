@@ -1,0 +1,20 @@
+{
+  "patch": "mtp-min-p-v1",
+  "files": [
+    {
+      "path": "vllm/sampling_params.py",
+      "original_sha256": "73e5bf250cb13803e4ce390407ae059b497898c8b81f9985d2b5c055d4db8f7d",
+      "patched_sha256": "1db061164c17c07629bb9cba17a98f80485249872fefdb5094fb5fbaecb04328"
+    },
+    {
+      "path": "vllm/v1/sample/logits_processor/__init__.py",
+      "original_sha256": "1f9b02dae8cf6d44484638037123d3a2dec6b7b9a2bcc9afceef1a9bf3eaedec",
+      "patched_sha256": "f620a77d6814c4282132b4b6f6499523b37ea2556e08e87621e3956b94f7f5af"
+    },
+    {
+      "path": "vllm/v1/sample/rejection_sampler.py",
+      "original_sha256": "4bb87d7984d967be9c7e5b6a6b489c02571ef2f2913211cb3f1eea74b2e1f32f",
+      "patched_sha256": "d453131abfa7639c3e3bbe5572b8a6e7b4e9992fdb3e400f9cc721e1d47eb769"
+    }
+  ]
+}

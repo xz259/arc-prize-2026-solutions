@@ -1,0 +1,25 @@
+{
+  "cpu_tests": 20,
+  "independent_review": {
+    "cpu_tests": 20,
+    "passed": 20,
+    "qualification": "CPU/source review only; native scalar readout and matched-frontier comparison remain pending",
+    "reviewed_source_manifest_canonical_sha256": "8b85f80225ff7ea57ee2504ed4596f1e85c270106b91b9e5ecbee2a15c3eef2c",
+    "reviewed_worker_sha256": "85016d455ae69ab10ada23c20040468801836ece51ed67de18baa01a3ccab3ca",
+    "reviewer": "baseline_diff",
+    "skipped": 0,
+    "verdict": "pass"
+  },
+  "isolated_package_cpu_tests": {
+    "passed": 20,
+    "skipped": 0,
+    "test_log_sha256": "5e84fb406fb5c2e5a67198fabc16a46104e3ee3e5bf39599cd889460b500693f"
+  },
+  "native_validation": false,
+  "passed": 20,
+  "schema": "arc3-lookahead-snapshot-v2-local-validation",
+  "scope": "CPU construction and source only; V1 first native comparison failed before byte readout",
+  "skipped": 0,
+  "source_manifest_canonical_sha256": "8b85f80225ff7ea57ee2504ed4596f1e85c270106b91b9e5ecbee2a15c3eef2c",
+  "source_manifest_file_sha256": "a06cbbe6cd9f359db26fab88ad506890cd5ffd876416354e6f4026b2a20a39bd"
+}

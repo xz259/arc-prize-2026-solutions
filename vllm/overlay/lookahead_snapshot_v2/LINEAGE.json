@@ -1,0 +1,34 @@
+{
+  "changes": [
+    "worker.py exact category-specific NHD stride guard and sole call-site keyword",
+    "SOURCE_MANIFEST.json adds qsa.py/flash_attn.py hashes and updated worker identity",
+    "test_snapshot.py imports v2 and expects 29 runtime source pins",
+    "test_layout_v2.py adds five CPU construction tests; fixtures/worker_v1.py is exact predecessor",
+    "documentation and validation receipts"
+  ],
+  "failed_v1_result_sha256": "51156a2cc50ab1cbfa6bb3cbc601bd445cd5091e35f85dc77ee34819eeb7de48",
+  "failed_v1_state_sha256": "e3a5df590c985fed320a32f43053d16d7fd06eb4f620e7aef13f2411c46d3fc3",
+  "parent_manifest_sha256": "c6f4358207e362e3d318bf0fb2654d356923f34d1c01cbc55d1424f02d8f5c6c",
+  "parent_package": "lookahead_snapshot_v1",
+  "parent_source_manifest_canonical_sha256": "a508ab549e6790f1eda6bab88a648bf313a0a71f15ad2f37a018e0f1d6499885",
+  "runtime_layout_inventory": {
+    "comparison_components": 121,
+    "main_nhd_views": 12,
+    "other_exact_dense_views": 97,
+    "owners": 73,
+    "typed_views": 109
+  },
+  "runtime_layout_sha256": "4cd8eb50038dea35ff4cfb019441081854596ef732cc077327ecbc9ed0516167",
+  "runtime_pin_confirmation": "Root verified both new source hashes in the live runtime before V2 freeze.",
+  "schema": "arc3-lookahead-snapshot-v2-lineage",
+  "unchanged_runtime_sources": [
+    "__init__.py",
+    "core.py",
+    "expected_inventory.json",
+    "guards.py",
+    "layout.py",
+    "provenance.py",
+    "receipt_schema.py",
+    "strict_receipt.py"
+  ]
+}

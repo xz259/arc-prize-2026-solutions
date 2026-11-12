@@ -1,0 +1,41 @@
+{
+  "label": "bench-2-persistent-n25-v1",
+  "client": "benchmark_observed.py",
+  "client_sha256": "fda55c5985b0191a35a4edb400f278b665dcf44f71f6ef2a5d04c0b3ba23ad5f",
+  "helper_sha256": {
+    "analyze.py": "cc7624d44e92d21191ff0f40c4e52403766187536f604b27ab382047c066b26a",
+    "raw_gpu_checks.py": "f87484a7087df9fd225c3dfed23d9487314ea53b0a72ce6fafd7a9e6018fcd17"
+  },
+  "timeout_seconds": 1620,
+  "argv": [
+    "--execute",
+    "--arm",
+    "persistent",
+    "--concurrency",
+    "25",
+    "--cycles",
+    "3",
+    "--output",
+    "/workspace/arc3-inference/runs/persistent-efficiency-20260913-v6-batch-performance/bench-2-persistent-n25-v1",
+    "--candidate-code",
+    "/workspace/arc3-inference/runs/persistent-efficiency-20260913-v6-batch-performance",
+    "--candidate-identity",
+    "/workspace/arc3-inference/runs/persistent-efficiency-20260913-v6-batch-performance/candidate-server.json",
+    "--expected-hostname",
+    "9b2fd24de2c6",
+    "--expected-boot-id",
+    "1bd8be96-58e2-4485-8fd1-c0e99dc12e74",
+    "--engine-events",
+    "/workspace/arc3-inference/runs/persistent-efficiency-20260913-v6-batch-performance/engine-events.jsonl",
+    "--service-events",
+    "/workspace/arc3-inference/runs/persistent-efficiency-20260913-v6-batch-performance/service-events.jsonl",
+    "--expected-mode",
+    "graph",
+    "--expected-proofs",
+    "0",
+    "--max-seconds",
+    "1500",
+    "--timeout",
+    "900"
+  ]
+}

@@ -1,0 +1,6 @@
+# Install only in fresh child interpreters; normal runtime wrapper is already active.
+ADAPTER = HERE/'private_moe'
+os.environ.update(ARC3_PRIVATE_MOE_SERVING='1',
+    ARC3_PRIVATE_MOE_SETTINGS=str(ADAPTER/'settings.json'),
+    ARC3_PRIVATE_MOE_RECEIPTS=str(HERE/'private-startup'))
+os.environ['PYTHONPATH'] = str(ADAPTER/'bootstrap')+':'+str(ADAPTER)+':'+os.environ['PYTHONPATH']

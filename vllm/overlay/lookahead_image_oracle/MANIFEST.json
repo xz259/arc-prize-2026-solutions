@@ -1,0 +1,27 @@
+{
+  "files": {
+    "LINEAGE.json": "bbabecf2b5516fb72e061d6a0d33a3597b545c71f22a70c0e081a865e5a71a61",
+    "LOCAL_TESTS.log": "2eef2482e7b8a1d459bf88d2353a568b83113dc19b949dc2f0ca6b1af7b5f341",
+    "README.md": "7dbc195f54e51da8cebf22a10b1bbb70fd11dad4ec311ab6c4d813411fbcf904",
+    "SOURCE_MANIFEST.json": "964a8d32cc7868628e1a9a75454c82b7adf3291d95ee41c47515a72bc93ece5d",
+    "VALIDATION.json": "837ee09c938e23164731cae794761219cc7ed4b6439555f7d5d7eff406316bcd",
+    "__init__.py": "1d27dcae64abf76d2a92f7f772d48f267f985794b57e578f717dcae1dd2a7ad4",
+    "closed.py": "84b5d7128feda1bef19878f38f731015c4db90dc21378b65f1e0393d0cc11496",
+    "core.py": "0ed47a02dd9f2fd86003e17dd941454bfaa2545409f3ab8772f4a3375b56d5cd",
+    "encoder.py": "38bbcc332d633831deca6505ca4842144d51c4f090546efbafaebdb1a59838fb",
+    "expected_inventory.json": "c1f431ab8de8185b1ce872bd75654d84ee85f3243322bbc68418cfa9e2d75bce",
+    "fixtures/worker_v2.py": "85016d455ae69ab10ada23c20040468801836ece51ed67de18baa01a3ccab3ca",
+    "guards.py": "12a5773c2d4e8205113a7f349fab1589a2a83d5e4a7eff2ecf4c2ca7574fc7ef",
+    "image_metadata.py": "6c184a2da46152ca814436dc89f747d201779bffb07efa58c2de43d3465208e6",
+    "layout.py": "8ab0c2bbc18e1ad22dab6b6d6cd859346b04a0e6d48c76b0f61ae5c20f72689d",
+    "provenance.py": "ac50ce8af5bee3a81d764a4f9722525d9cecb157d2b093e1c333ac50c00b9159",
+    "receipt_schema.py": "8e24239e1206c39e1edbe9f0b8a146ddc8656f0ee0fde372ffd45a9420627f21",
+    "strict_receipt.py": "266462bc16b705baf821aa4ee706c71716fe4f344e50c90856fb4280da425995",
+    "test_images.py": "e49090caab6e64a5897bfd0685125ee3f1b3be7a7bea33b576289a50c2cff081",
+    "test_layout_v2.py": "c2192d5dd348e933a0083979249be06f1689eed9a24535e210516c7adba991a4",
+    "test_receipts.py": "4134def4d5f21ca87038c08e62a803af53d80f45241e17524b004cf088b48c54",
+    "test_snapshot.py": "4fd50801031d88d6838182d3e45c5609d93e3a6babad1b383cab0a4ac79536d0",
+    "worker.py": "bf88087ecd4339f1d08e0954d2b9ef7faea7c036fbf54e5af2074008decef7aa"
+  },
+  "schema": "arc3-image-oracle-package-v1"
+}
