@@ -40,6 +40,7 @@ The engine is the vLLM development build shipped in the public image `vllm/vllm-
 
 - **The compiled runtime.** The engine needs the image above (PyTorch 2.13, CUDA 13.0, and the compiled extensions of vLLM and FlashInfer). `vllm/base/reference/download_runtime.py` fetches the image layers by digest and `vllm/base/prepare_runtime.py` extracts them.
 - **Model weights.** The target is Intel's AutoRound W4A16 checkpoint of Qwen3.8-Flash-Next, with its PLE table resharded into 19 files for the startup read (`arc3/kaggle/build/reshard_ple.py`). The fine-tuned drafter and the KV centering means are not in the repository.
+- **The drafter's vocabulary list.** The drafter scores a fixed list of 32,000 token ids (`draft_vocab_32k.json`, read by the stage-2 part `drafthead`). We ran with the list from the public Kaggle dataset `lordhansolo/taaf-kaggle-source`, a milestone-2 solution, which is not ours to redistribute. Any list in the same format works: a JSON file with half-open `token_ranges`.
 - **Games and puzzles.** The 25 public ARC-AGI-3 games and the ARC-AGI-2 tasks come from the competitions' data. The 30 custom games used for validation were made by @sonphamorg and @markbarney ([gallery](https://arc.markbarney.net/arc3/gallery)) and are not redistributed.
 - **Caches and records.** The Kaggle packages also carried compile caches, kernel binaries and startup receipts. Those, the run logs and the game transcripts are left out.
 
@@ -47,7 +48,7 @@ So the servers do not run from a fresh clone. The repository holds the code as i
 
 ## Versions
 
-`main` holds the last package of each track, ARC-AGI-3 v16 and ARC-AGI-2 v2k, with the documentation added on top. Each tag holds the code files of one Kaggle package unchanged, except that a path on my machine is replaced by `<project>` in four of them (a metadata field and a README).
+`main` holds the last package of each track, ARC-AGI-3 v16 and ARC-AGI-2 v2k, with the documentation added on top. Each tag holds the code files of one Kaggle package unchanged, with two exceptions: a path on my machine is replaced by `<project>` in four of them (a metadata field and a README), and the vocabulary list named above is left out.
 
 | Tag | Package | Leaderboard |
 |---|---|---|
@@ -110,7 +111,6 @@ The comments also carry working notes: dates, run names, and quotes of my instru
 | `arc2/engine/`, `arc2/l4port/`, `arc2/kaggle/runtime_patch/` | Apache-2.0 | The engine code of the ARC-AGI-2 port, likewise derived from vLLM. |
 | `arc3/harness/` | Apache-2.0 (`arc3/harness/src/LICENSE.dfranzen`) | `src/` is @dfranzen's milestone-2 solution ([da-fr/arc-agi-3-solution](https://github.com/da-fr/arc-agi-3-solution) at `10882e3`), unmodified: his agent, built on Tufa Labs' Duck harness, and Tufa Labs' framework `taaf`. Our layers patch it and in places carry modified copies of its code and prompts. |
 | `training/mtp_drafter/kit/qwen38_mtp.py` | Apache-2.0 | A port of vLLM's model code for the MTP head. |
-| `vllm/launch/draft_vocab_32k.json` | none stated at the source | The drafter's vocabulary subset, `configs/draft_vocab_32k.json` from the public Kaggle dataset `lordhansolo/taaf-kaggle-source` (a milestone-2 solution), unchanged. |
 | everything else | MIT-0 ([LICENSE](LICENSE)) | Ours: the ARC-AGI-2 harness, the Kaggle kits, the training and analysis scripts, the documents. |
 
 Some GDN kernels in `vllm/stage2/` derive from the flash-linear-attention kernels that vLLM bundles (MIT; its licence is in `vllm/vllm/third_party/flash_linear_attention/`).

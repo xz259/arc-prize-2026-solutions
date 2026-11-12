@@ -62,8 +62,8 @@ Some pieces follow or port changes that were open or merged upstream at the time
 
 ## What is left out
 
-Compiled objects (`base/kernels/build/`, the PLE poll kernel's build directory, jemalloc), compile and AOT caches, startup receipts, the scoring set behind the NLL fingerprint, and backup copies of files that sat beside the live ones in the package.
+Compiled objects (`base/kernels/build/`, the PLE poll kernel's build directory, jemalloc), compile and AOT caches, startup receipts, the scoring set behind the NLL fingerprint, the drafter's vocabulary list (see [`launch/README.md`](launch/README.md)), and backup copies of files that sat beside the live ones in the package.
 
 ## Licence
 
-Apache-2.0 ([LICENSE](LICENSE)), as vLLM: several overlay modules and stage-2 parts are modified copies of vLLM functions. The GDN rollback kernels (`stage2/rb_kernels.py` and the kernels built on it) derive from the flash-linear-attention kernels bundled with vLLM, which are MIT-licensed (`vllm/third_party/flash_linear_attention/LICENSE`). [`launch/draft_vocab_32k.json`](launch/draft_vocab_32k.json) is third-party data; see [`launch/README.md`](launch/README.md).
+Apache-2.0 ([LICENSE](LICENSE)), as vLLM: several overlay modules and stage-2 parts are modified copies of vLLM functions. The GDN rollback kernels (`stage2/rb_kernels.py` and the kernels built on it) derive from the flash-linear-attention kernels bundled with vLLM, which are MIT-licensed (`vllm/third_party/flash_linear_attention/LICENSE`).

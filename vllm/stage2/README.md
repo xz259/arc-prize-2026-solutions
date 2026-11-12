@@ -17,7 +17,7 @@ Both ARC-AGI-3 packages install the 43 parts below; the list is the `STAGE2` ent
 | `wy` | The same replay and the verify step in the chunked (WY) matrix form (`wy_kernels.py`). |
 | `persist` | Speculative decoding inside persistent sessions: stops, the count of kept tokens, and the commit of a paused lane's pending tokens when it resumes (`persist_kernels.py`). |
 | `draftqsa` | Keeps the drafter consistent with eviction: its decode steps use the evicted layout, and its positions stay the original ones. |
-| `drafthead` | The drafter scores a fixed subset of 32,000 tokens ([`draft_vocab_32k.json`](../launch/draft_vocab_32k.json)) instead of the full vocabulary, and truncates its own distribution to the target's sampling settings (top-k 20, top-p 0.95). |
+| `drafthead` | The drafter scores a fixed subset of 32,000 tokens (`draft_vocab_32k.json`, which is not in the repository; see [`../launch/`](../launch/)) instead of the full vocabulary, and truncates its own distribution to the target's sampling settings (top-k 20, top-p 0.95). |
 | `draftwin` | Limits the drafter's attention selection to its newest tokens (16,384 in the shipped profiles), so its cache can be a short ring (`draftring`). |
 | `vsampler` | Draft verification through a sampler that works on at most 32 candidates per row (`cand_verify.py`). It carries the two fixes of the write-up's "exact speculative sampling" and block verification. |
 | `topkfix` | Exact top-k and top-p masking in place of vLLM's Triton kernel, which truncates rows with many tied logits wrongly. |
