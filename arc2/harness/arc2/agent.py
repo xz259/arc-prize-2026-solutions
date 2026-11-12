@@ -127,7 +127,7 @@ def run_attempt(task, session, kernel, texts, *, budget, notice, log=None, fmt="
                 notice_key="budget_notice", fallback=True, corrections=0, no_call="nudge_once", idle_limit=6,
                 repeat_limit=0, cap_state=None, prompt_key="system", reply_cap=None, recovery_budget_key="recovery_budget",
                 image_cell=None, idle_skip_status=False, marker_key="turn_marker", wrap_at=None, limit_at=None,
-                text_keys=None, recall_at=None, progress=None, note_guard=False):
+                text_keys=None, recall_at=None, progress=None, note_guard=False, invalid_recover=0, invalid_limit=0):
     """One attempt (a solver, or with messages / answered / nudge_key / notice_key another session kind such as the
     judge). corrections: how many times an unverified attempt-1 answer is answered with correction_text() before the
     attempt may finish with it.
@@ -136,7 +136,12 @@ def run_attempt(task, session, kernel, texts, *, budget, notice, log=None, fmt="
     idle_limit such replies in a row end the attempt ('stalled'). repeat_limit: that many repetition closes end the
     attempt ('degenerate'). cap_state: a threading.local the in-reply status cue reads (used, budget).
     idle_skip_status (v2b, 2026-10-29): a reply without a tool call that carried an in-reply status note does not count
-    toward idle_limit (run03a: 84% of status notes ended their reply within one token)."""
+    toward idle_limit (run03a: 84% of status notes ended their reply within one token).
+    v2q (the user, 2026-11-01: "Can we add a recovery (and maybe stop and park in the queue if it does not recover)?"):
+    replies whose tool calls all fail (an unknown tool or unreadable arguments: nothing runs) count in a row; at
+    invalid_recover of them texts['invalid_call_recovery'] follows the tool results; at invalid_limit the attempt ends
+    ('stalled'): its saved answers are kept and the task takes its next pass from the queue (g7a: one pass sent 746 empty
+    python calls after its 12th eviction, until the token budget; healthy runs have at most 3 in a row). 0 = off."""
     log = log or (lambda kind, payload: None)
     res = AttemptResult(task.task_id)
     t0 = time.monotonic()
@@ -149,6 +154,7 @@ def run_attempt(task, session, kernel, texts, *, budget, notice, log=None, fmt="
     nudged = False
     corrected = 0
     idle = 0
+    invalid = 0                                  # v2q: replies in a row whose calls all failed
     turns = 0
 
     def generate(ext):
@@ -257,6 +263,7 @@ def run_attempt(task, session, kernel, texts, *, budget, notice, log=None, fmt="
                 break
             idle = 0
             tool_msgs = []
+            ran = 0
             for call in calls:
                 fn = call.get("function") or {}
                 name = str(fn.get("name", "")).strip()
@@ -274,6 +281,7 @@ def run_attempt(task, session, kernel, texts, *, budget, notice, log=None, fmt="
                     tool_msgs.append(_tool(cid, texts["bad_arguments"].format(detail=f"{type(exc).__name__}: {exc}")))
                     continue
                 r = kernel.run(code)
+                ran += 1
                 res.tool_calls += 1
                 res.kernel_timeouts += int(r.timed_out)
                 for ev in r.events:
@@ -290,6 +298,18 @@ def run_attempt(task, session, kernel, texts, *, budget, notice, log=None, fmt="
                                  error=r.error, timed_out=r.timed_out, restarted=r.restarted, code=code,
                                  text=r.text, events=r.events))
                 tool_msgs.append(_tool(cid, r.text))
+            recovery = None
+            if ran:
+                invalid = 0
+            else:                                        # v2q: every call of this reply failed, nothing ran
+                invalid += 1
+                if invalid_limit and invalid >= invalid_limit:
+                    _count(res.nudges, "invalid_stop")
+                    res.end = "stalled"
+                    break
+                if invalid_recover and invalid == invalid_recover:
+                    _count(res.nudges, "invalid_recovery")
+                    recovery = texts["invalid_call_recovery"].format(n=invalid)
             note = None
             if not noticed and budget - res.generated_tokens <= notice:
                 noticed = True
@@ -300,9 +320,10 @@ def run_attempt(task, session, kernel, texts, *, budget, notice, log=None, fmt="
                 used = res.generated_tokens
                 marker = texts[marker_key].format(turn=turns, used=used, budget=budget, wrap=wrap_now(),
                                                   spent=spent_now())
-                tool_msgs.append(_user(marker + (" " + note if note else ""), observation=True))
-            elif note:
-                tool_msgs.append(_user(note))
+                tool_msgs.append(_user(marker + (" " + note if note else "") + (" " + recovery if recovery else ""),
+                                       observation=True))
+            elif note or recovery:                       # v2q: the recovery note in the same message as the budget notice
+                tool_msgs.append(_user(" ".join(x for x in (note, recovery) if x)))
             external = tool_msgs
     except Exception as exc:                             # noqa: BLE001 - the attempt ends; the run continues
         cls = type(exc).__name__

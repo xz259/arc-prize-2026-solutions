@@ -1,6 +1,7 @@
 """Local stand-in for the transport's PersistentSession (runner --fake): scripted replies, no server.
 
-Each reply is ("code", source) for one python call, ("final", text) for a reply without a tool call, or ("pause", n)
+Each reply is ("code", source) for one python call, ("args", raw) for one python call with these raw arguments (v2q), ("final",
+text) for a reply without a tool call, or ("pause", n)
 for a length pause of n tokens before the next scripted reply. The default script defines an identity transform,
 checks it, submits it and finishes, so a dry run exercises the kernel, the turn loop, the logs, the submission file
 and the scorer end to end.
@@ -63,11 +64,12 @@ class FakeSession:
                                   token_ids=[0] * step[1], assistant_token_ids=[0] * step[1], pending=True)
         self.pending = False
         n = self.tokens_per_reply
-        if step[0] == "code":
+        if step[0] in ("code", "args"):
             self.calls += 1
+            raw = json.dumps({"code": step[1]}) if step[0] == "code" else step[1]
             msg = {"role": "assistant", "content": "",
                    "tool_calls": [{"id": f"call_{self.calls}", "type": "function",
-                                   "function": {"name": "python", "arguments": json.dumps({"code": step[1]})}}]}
+                                   "function": {"name": "python", "arguments": raw}}]}
             finish = "tool_calls"
         else:
             msg = {"role": "assistant", "content": step[1]}

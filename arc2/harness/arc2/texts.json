@@ -9,6 +9,7 @@
  "nudge_format": "(Harness: the reply contained a tool call that could not be read: {detail}. Call python with a JSON object {{\"code\": \"...\"}}.{wrap})",
  "unknown_tool": "Unknown tool {name!r}; the only tool is python.",
  "bad_arguments": "The python call's arguments could not be read ({detail}); nothing was run. Pass {{\"code\": \"...\"}}.",
+ "invalid_call_recovery": "Your last {n} python calls ran nothing: each call carries the code as a string in its \"code\" argument, for example {{\"code\": \"history()\"}}.",
  "budget_notice": "(Harness: about {left:,} tokens of this puzzle's budget remain. Record your best answer with submit(...) now if you have not.)",
  "recovery_budget": "(Harness: the previous reply was closed at its length limit. That is not an error; continue with a python call, keeping the reasoning short.)",
  "recovery_repeat": "(Harness: the previous reply was closed because it repeated the same tokens. Compute what you need in code and continue with a python call.{wrap})",

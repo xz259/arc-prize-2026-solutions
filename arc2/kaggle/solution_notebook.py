@@ -1,13 +1,13 @@
 """kaggle_arc2_notebook.py (2026-10-31, ARC2 - main; the user: "a provisional version for kaggle submission tomorrow afternoon"): the
 ARC-2 Kaggle notebook for 4x L4 (internet off). Paste it into a notebook whose inputs are the three Kaggle Models (the target
-qwen3.8-flash-next-w4a16-intel-ple19, arc3-bundle, arc2-code-v2j) and the competition; the "# %%" lines split it into cells. Modeled on
+qwen3.8-flash-next-w4a16-intel-ple19, arc3-bundle, arc2-code-v2k) and the competition; the "# %%" lines split it into cells. Modeled on
 the ARC-3 notebook (inference_stack/kaggle_upload/kaggle_arc3_notebook_v16.py: inputs, extraction, links, logs, hard stop).
 In a competition rerun (KAGGLE_IS_COMPETITION_RERUN) it solves the test challenges for BUDGET_S; otherwise the configured test
 (default: the evaluation set with its solutions, so the harness's score.json is readable). Either way /kaggle/working/submission.json
 holds every task of the challenges file from the first minutes on (placeholders, then the harness's answers merged in).
 Nothing here stops the run: every check logs and the run continues (a block fails the submission and scores zero).
 The server: one TP2 x PP2 server on the four L4s (profile g60f8inp128: 60K context, MTP K 4, prune 128, FP8 tier A_in), the L4
-production path of arc2_stack/l4port (L4PORT_STATE_2026-10-31.md); the harness: harness_v2p (P3_ORDER, PASS2_FRAME; harness_v2n the fallback) (v2m's passes until two valid answers, at most 4;
+production path of arc2_stack/l4port (L4PORT_STATE_2026-10-31.md); the harness: harness_v2q (P3_ORDER, PASS2_FRAME, the invalid-call recovery / stop; harness_v2n the fallback) (v2m's passes until two valid answers, at most 4;
 then one extra pass for identical answers or one review for distinct ones when the mean of passes 1-2 reaches 80K; that order of
 priority after the second passes; rank policy, KV admission)."""
 
@@ -68,8 +68,8 @@ L4_SIZING = dict(L4_SIZING, ARC3_PY_PREPEND="/mnt/shared/arc2/l4port/bootstrap_l
                  else "/mnt/shared/arc2/l4port/bootstrap_l4prod8")
 LANES = "auto"                  # "auto": floor of vLLM's maximum concurrency at the profile's context (every lane fits at full length),
 LANES_CAP = L4_LANES            # capped at the server's max sequences
-CODE_MODEL = "arc2-code-v2j"    # the code package's Kaggle Model slug: package v2j as its own model, the version in the name (the
-                                # user, 11-01); arc2-code-v2i holds v2i, arc2-code-v2h v2h, arc2-code-ver v2g, arc2-code v2d / v2e
+CODE_MODEL = "arc2-code-v2k"    # the code package's Kaggle Model slug: package v2k as its own model, the version in the name (the
+                                # user, 11-01); arc2-code-v2j holds v2j, arc2-code-v2i v2i, arc2-code-v2h v2h, arc2-code v2d / v2e
 TEST_TASKS = "eval"             # test runs: "eval" = the competition's evaluation challenges with their solutions (a local score) |
                                 # "test" = the test challenges (no score) | "eval8" = the first 8 evaluation tasks (a short smoke)
 TEST_BUDGET_S = 2.0 * 3600      # a test run's budget from the first cell
@@ -105,7 +105,7 @@ PASS2_FRAME = "off"             # v2h (the user, 11-01: "Just add it as a flag";
 P3_ORDER = "more1,third,review,more0"   # v2j (the user, 11-01 18:1x: the swap): phase 3's classes by points per M tokens over six
                                 # eval runs: a further pass of a task with one valid pass (0.66), the extra pass of identical answers
                                 # (0.40), the review of distinct answers (0.21), a further pass of a task with none (-1.62). v2i
-                                # shipped "third,more1,review,more0"; "third,more,review" = v2h's order. Harness v2p reads it
+                                # shipped "third,more1,review,more0"; "third,more,review" = v2h's order. Harness v2q reads it
 OUTPUTS_TO_WORKING = not TRUE_SUBMISSION   # test runs keep the harness's run directory and the server logs in /kaggle/working/arc2
 LABEL = ("ka2s" if TRUE_SUBMISSION else "ka2t") + time.strftime("%m%d%H%M", time.gmtime(NOTEBOOK_START))
 W = Path("/kaggle/working")
@@ -352,7 +352,7 @@ checks = {p: os.path.exists(p) for p in ("/workspace/arc3-inference/runtime_pyth
                                         "/workspace/models/Qwen3.8-Flash-Next-mtp-draft-nvfp4a16-fr1cfinal/config.json",
                                         "/workspace/kvring_dev/kaggle/kaggle_run.py", "/mnt/shared/arc2/kaggle/kaggle_run_arc2_v2f.py",
                                         "/mnt/shared/arc2/l4port/l4prod/arc2_server_l4.py", "/mnt/shared/arc2/l4port/sidepod/KDEF_sp20.json",
-                                        "/mnt/shared/arc2/harness_v2n/arc2/runner.py", "/mnt/shared/arc2/harness_v2p/arc2/runner.py",
+                                        "/mnt/shared/arc2/harness_v2n/arc2/runner.py", "/mnt/shared/arc2/harness_v2q/arc2/runner.py",
                                         "/mnt/shared/arc2/l4port/bootstrap_l4prod9/sitecustomize.py",
                                         "/mnt/shared/arc2/l4port/l4prod/l4port_idxshard_v3.py",
                                         CHALLENGES)}
@@ -387,7 +387,7 @@ CFG = dict(label=LABEL, profile=PROFILE, kdef="/mnt/shared/arc2/l4port/sidepod/K
            harness_dir="/mnt/shared/arc2/harness_v2n",      # v2g: harness v2n (the reviewer's input 22: answers saved by
                                                            # passes open at the stop are recorded; the review pair)
            submission_path=SUBMISSION, runs_dir="/mnt/shared/arc2/runs", status_every_s=600, merge_every_s=60)
-try:                                    # v2i: harness v2p with the driver's own HARNESS_ARGS (read from its source), its phase-3
+try:                                    # v2k: harness v2q with the driver's own HARNESS_ARGS (read from its source), its phase-3
     import ast                          # order replaced by P3_ORDER, and --pass2-frame when PASS2_FRAME is set
     _drv = ast.parse(open("/mnt/shared/arc2/kaggle/kaggle_run_arc2_v2f.py").read())
     _ha = [ast.literal_eval(n.value) for n in _drv.body if isinstance(n, ast.Assign) and len(n.targets) == 1
@@ -401,11 +401,11 @@ try:                                    # v2i: harness v2p with the driver's own
             _args += ["--pass2-frame", PASS2_FRAME]
         else:
             say("PASS2_FRAME %r not applied (colour or colour_symmetry); pass 2 runs on the puzzle itself" % PASS2_FRAME)
-    CFG.update(harness_dir="/mnt/shared/arc2/harness_v2p", harness_args=_args)
-    say("harness v2p: phase-3 order %s, PASS2_FRAME %s, %d harness arguments (the driver's %d)" % (
+    CFG.update(harness_dir="/mnt/shared/arc2/harness_v2q", harness_args=_args)
+    say("harness v2q: phase-3 order %s, PASS2_FRAME %s, %d harness arguments (the driver's %d)" % (
         P3_ORDER, PASS2_FRAME, len(_args), len(_ha[0])))
 except Exception as exc:  # noqa: BLE001  (a log line, never a stop: the run keeps v2h's harness v2n and the driver's arguments)
-    say("harness v2p not configured: %r; the run keeps harness v2n with the driver's arguments (order third,more,review)" % exc)
+    say("harness v2q not configured: %r; the run keeps harness v2n with the driver's arguments (order third,more,review)" % exc)
 REPORT["harness"] = dict(dir=CFG["harness_dir"], p3_order=P3_ORDER, pass2_frame=PASS2_FRAME, args=CFG.get("harness_args"))
 REPORT["idxshard_v3"] = dict(on=IDXSHARD_V3, py_prepend=L4_SIZING["ARC3_PY_PREPEND"])
 REPORT["run_config"] = CFG

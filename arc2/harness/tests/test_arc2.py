@@ -1328,6 +1328,79 @@ class TestV2p(unittest.TestCase):
                 TestRunnerV1.run_main(self, common + ["--phase3-priority", bad], first)
 
 
+
+class TestV2q(unittest.TestCase):
+    """v2q (the user, 2026-11-01: "Can we add a recovery (and maybe stop and park in the queue if it does not recover)?"):
+    replies whose tool calls all fail count in a row; 4 add the recovery note, 8 end the pass ('stalled') and the task takes
+    its next pass from the queue."""
+
+    def run1(self, scripts, passes="1"):
+        ids = Path(tempfile.mkdtemp()) / "ids.txt"
+        ids.write_text(FLIPLR)
+        return TestRunnerV1.run_main(self, ["--lanes", "1", "--policy", "rank", "--challenges", str(TRAIN_CH), "--solutions",
+                                            str(TRAIN_SOL), "--ids", "@" + str(ids), "--passes", passes, "--valid-target", "1",
+                                            "--max-passes", passes], scripts)
+
+    def test_recovery_note_then_normal_finish(self):
+        flip = "def flip(g):\n    return np.fliplr(g)\nsubmit(flip)"
+        out, score, rows = self.run1([[("args", "{}")] * 4 + [("code", flip), ("final", "Done.")]])
+        self.assertEqual([(r["pass_no"], r["end"]) for r in rows], [(1, "finished")])
+        self.assertEqual(rows[0]["nudges"].get("invalid_recovery"), 1)
+        self.assertNotIn("invalid_stop", rows[0]["nudges"])
+        self.assertEqual(score["score"], 1.0)
+
+    def test_three_failed_calls_do_nothing(self):
+        flip = "def flip(g):\n    return np.fliplr(g)\nsubmit(flip)"
+        out, score, rows = self.run1([[("args", "{}")] * 3 + [("code", flip), ("final", "Done.")]])
+        self.assertEqual(rows[0]["end"], "finished")
+        self.assertNotIn("invalid_recovery", rows[0]["nudges"])
+
+    def test_stop_at_eight_and_next_pass_from_the_queue(self):
+        flip = "def flip(g):\n    return np.fliplr(g)\nsubmit(flip)"
+        out, score, rows = self.run1([[("args", "{}")] * 3 + [("args", "not json")] + [("args", "{}")] * 4 + [("code", flip)],
+                                      [("code", flip), ("final", "Done.")]], passes="2")
+        self.assertEqual([(r["pass_no"], r["end"]) for r in rows], [(1, "stalled"), (2, "finished")])
+        self.assertEqual((rows[0]["nudges"].get("invalid_recovery"), rows[0]["nudges"].get("invalid_stop")), (1, 1))
+        self.assertEqual(rows[0]["tool_calls"], 0)
+        self.assertEqual(score["score"], 1.0)
+
+    def test_recovery_text_reaches_the_model(self):
+        from arc2 import runner
+        flip = "def flip(g):\n    return np.fliplr(g)\nsubmit(flip)"
+        ids = Path(tempfile.mkdtemp()) / "ids.txt"
+        ids.write_text(FLIPLR)
+        made = []
+        orig = runner.Session.make
+        def make(self, log):
+            made.append(FakeSession([("args", "{}")] * 4 + [("code", flip), ("final", "Done.")], log=log))
+            return made[-1]
+        runner.Session.make = make
+        d = tempfile.mkdtemp()
+        self.addCleanup(lambda: __import__("shutil").rmtree(d, ignore_errors=True))
+        try:
+            runner.main(["--out", str(Path(d) / "run"), "--fake", "--status-every", "1000", "--timeline-every", "0",
+                         "--deadline-s", "3600", "--lanes", "1", "--policy", "rank", "--challenges", str(TRAIN_CH),
+                         "--solutions", str(TRAIN_SOL), "--ids", "@" + str(ids), "--passes", "1", "--valid-target", "1",
+                         "--max-passes", "1", "--observations", "turns"])
+        finally:
+            runner.Session.make = orig
+        texts = [json.dumps(m) for ext in made[0].received for m in ext]
+        hits = [i for i, x in enumerate(texts) if "ran nothing" in x]
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(sum(1 for ext in made[0].received for m in ext if m.get("role") == "user" and "ran nothing" in json.dumps(m)), 1)
+
+    def test_off_with_zero(self):
+        flip = "def flip(g):\n    return np.fliplr(g)\nsubmit(flip)"
+        ids = Path(tempfile.mkdtemp()) / "ids.txt"
+        ids.write_text(FLIPLR)
+        out, score, rows = TestRunnerV1.run_main(self, ["--lanes", "1", "--policy", "rank", "--challenges", str(TRAIN_CH),
+                                                        "--solutions", str(TRAIN_SOL), "--ids", "@" + str(ids), "--passes", "1",
+                                                        "--valid-target", "1", "--max-passes", "1",
+                                                        "--invalid-recover", "0", "--invalid-limit", "0"],
+                                                  [[("args", "{}")] * 9 + [("code", flip), ("final", "Done.")]])
+        self.assertEqual(rows[0]["end"], "finished")
+        self.assertNotIn("invalid_recovery", rows[0]["nudges"])
+
 class TestV2h(unittest.TestCase):
     """v2h (the user, 2026-10-29: fix the two mismatches; production values elsewhere)."""
 

@@ -209,6 +209,12 @@ def parse(argv=None):
                         "solution is saved (v2)")
     p.add_argument("--idle-limit", type=int, default=6, help="keep_going: replies without a tool call in a row that end the pass")
     p.add_argument("--repeat-limit", type=int, default=0, help="repetition closes that end a pass ('degenerate'; 0 = never)")
+    p.add_argument("--invalid-recover", type=int, default=4,
+                   help="v2q: after this many replies in a row whose tool calls all failed (nothing ran), a recovery note "
+                        "follows the tool results (0 = never)")
+    p.add_argument("--invalid-limit", type=int, default=8,
+                   help="v2q: this many such replies in a row end the attempt ('stalled'; its saved answers are kept, the task "
+                        "takes its next pass from the queue; 0 = never)")
     p.add_argument("--status-text", choices=("v2", "v2b"), default="v2",
                    help="v2b: the status note says it does not end the reply (run03a: 84%% of v2 notes ended it)")
     p.add_argument("--idle-skip-status", action="store_true",
@@ -734,6 +740,7 @@ def main(argv=None):
                               fmt=args.grid_format, pin=not args.no_pin, deadline=deadline,
                               observe_turns=args.observations == "turns", corrections=args.corrections,
                               no_call=args.no_call, idle_limit=args.idle_limit, repeat_limit=args.repeat_limit,
+                              invalid_recover=args.invalid_recover, invalid_limit=args.invalid_limit,
                               cap_state=CAP_STATE, prompt_key={"v1": "system", "v2": "system_v2", "v2d": "system_v2d",
                                                                "v2e": "system_v2e",
                                                                "v2e_budget": "system_v2e_budget", "v2j": "system_v2j",
@@ -813,6 +820,7 @@ def main(argv=None):
             res, kernel = RV.run_review(task, previous, session, texts, budget=args.review_budget, fmt=args.grid_format,
                                         log=log, kernel=kernel, deadline=deadline, cap_state=CAP_STATE,
                                         no_call="keep_going", idle_limit=args.idle_limit, repeat_limit=args.repeat_limit,
+                                        invalid_recover=args.invalid_recover, invalid_limit=args.invalid_limit,
                                         observe_turns=args.observations == "turns", reply_cap=args.cap_close,
                                         recovery_budget_key="recovery_budget_v2d", idle_skip_status=args.idle_skip_status,
                                         marker_key="turn_marker_v2d", wrap_at=args.review_wrap_at, recall_at=None,
