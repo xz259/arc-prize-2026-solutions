@@ -4,14 +4,14 @@ Code behind my ARC Prize 2026 entries on Kaggle.
 
 | Track | Leaderboard | Hardware and time limit | Description |
 |---|---|---|---|
-| ARC-AGI-3 | 58.59 (4th on the public leaderboard) | one RTX PRO 6000, 9 hours | [write-up](arc3/docs/writeup.md) |
+| ARC-AGI-3 | 58.59 (4th on the public leaderboard) | one RTX PRO 6000, 9 hours | [write-up](arc3/docs/writeup.md), also [on Kaggle](https://www.kaggle.com/competitions/arc-prize-2026-arc-agi-3/writeups/public-lb-4th) |
 | ARC-AGI-2 | 76.81 | four L4s, 12 hours | [arc2/README.md](arc2/README.md) |
 
 Both entries run Intel's W4A16 AutoRound quantization of Qwen3.8-Flash-Next as an agent that works through a Python tool. The model itself is not trained; only the small MTP drafter used for speculative decoding is fine-tuned. Most of the work is in the inference engine and in how the harness shares it between tasks.
 
 ## Where to start
 
-- **The method:** the [ARC-AGI-3 write-up](arc3/docs/writeup.md), and the first section of [arc2/README.md](arc2/README.md) for ARC-AGI-2.
+- **The method:** the ARC-AGI-3 write-up, [here](arc3/docs/writeup.md) or [on Kaggle](https://www.kaggle.com/competitions/arc-prize-2026-arc-agi-3/writeups/public-lb-4th), and the first section of [arc2/README.md](arc2/README.md) for ARC-AGI-2.
 - **The engine:** [vllm/README.md](vllm/README.md) maps each technique of the write-up to its files. The 4-bit KV cache, the rollback of rejected drafts and the scaled recurrent state are in [`vllm/stage2/`](vllm/stage2/); persistent sessions and eviction are in [`vllm/overlay/`](vllm/overlay/).
 - **The harnesses:** [`arc3/harness/`](arc3/harness/) plays the games, and [`arc2/harness/`](arc2/harness/) solves the puzzles; the second has tests and a dry run that work without a server.
 

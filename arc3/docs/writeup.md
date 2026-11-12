@@ -1,4 +1,8 @@
-# ARC-AGI-3: solution write-up
+# [Public LB 4th] The Price of a Faster Token
+
+*Subtleties of precision and output quality in inference engineering*
+
+Posted on Kaggle as the [solution write-up](https://www.kaggle.com/competitions/arc-prize-2026-arc-agi-3/writeups/public-lb-4th) of ARC Prize 2026 - ARC-AGI-3. The code is in [this repository](../../README.md).
 
 I would like to thank the ARC Prize Foundation and Kaggle for hosting this competition. I have been a fan of ARC-AGI since my early days on Kaggle. I had never entered before, as I had no approach I found viable, but I always read the winning solutions and kept up with the news. A couple of weeks before the second milestone prize, movement on the public leaderboard led me to @chiefkeith's Qwen3.8-Flash-Next notebook, and I immediately saw a lot of room for improvement. My experience from the AIMO competitions suggested that a capable base model behind a well-optimized inference pipeline can do very well without any training, while RL without distillation from a stronger teacher may not pay off.
 
@@ -114,7 +118,7 @@ It grew with the horizon, from 0.17% in heads with horizons below 64 tokens to a
 | BF16 (vLLM default) | about 15% at 96-128K | decay lost to rounding; long-horizon state stagnates | replaced |
 | FP16 | 6.8 times lower, but 7.5-12% past 128K | closed 97% of the NLL gap to FP32 | interim |
 | FP16 with an FP32 scale per 32 state rows | at most 2.5% | decay goes into the scale, so it is never rounded away; scales fit in page padding | adopted |
-| plus stochastic rounding of the store | 0.8-1.0% instead of 1.5-2.5% beyond 16K horizons (emulated) | +0.13 ms per step | adopted (final stack) |
+| plus stochastic rounding of the store | 0.8-1.0% instead of 1.5-2.5% beyond 16K horizons | +0.13 ms per step | adopted (final stack) |
 | FP32 | 0 | two fewer lanes, 6% fewer tokens; same score | rejected |
 
 The stochastic rounding adds 13 bits of hash noise before truncation, so a store is unbiased in expectation yet deterministic. Because vLLM sizes the attention pages to match the state's page, an FP32 state would have doubled the page and cost two lanes: 1,575 against 1,677 tok/s, and 60.3 against 61.1 estimated points, a tie. We could not isolate the fix's score effect, because it arrived together with the in-level refresh.
@@ -146,5 +150,5 @@ Exploratory runs, runs at other context lengths and a rejected expert requantiza
 ## 5. Closing thoughts
 
 - **Submit early.** We kept postponing our first full-stack submission: each time we were ready to move to Kaggle, the top of the leaderboard had moved, and we went back to improving the solution. An early submission would have revealed the roughly ten-point gap between our offline validation and the leaderboard (§2.3) while there was still time to act on it.
-- **We concluded too early that we had plateaued.** After our final validation runs we decided that neither more throughput nor a better harness would close the gap to the top, and that the only plausible gains left were in distillation and RL. That assumption stopped us from exploring further, and we spent our last days on ARC-AGI-2 instead. The 1st- and 2nd-place write-ups show that the conclusion was wrong.
+- **We concluded plateaued too early.** After our final validation runs we decided that neither more throughput nor a better harness would close the gap to the top, and that the only plausible gains left were in distillation and RL. That assumption stopped us from exploring further, and we spent our last days on ARC-AGI-2 instead. The 1st- and 2nd-place write-ups show that the conclusion was wrong.
 - **On working with AI agents.** I only started automating my workflow with Codex and Claude Code near the end of my previous competition. This solution was built with their help, and so was this write-up; they proposed ideas as well as implementing and testing them, and greatly increased the pace at which I could iterate. For now, a person working with these agents still does better than either alone, and many people are wondering how long that will last, and whether agents will soon win Kaggle competitions like this one on their own. I have no special insight here, only my experience from this competition, and I may well be wrong. My hope is that they will not, at least not entirely. It may not be economically viable to turn every long-horizon task of this kind into an RL environment with a reliable reward, since each rollout would be very long and slow to run. And over horizons that long, even with compaction, context remains a limiting factor.

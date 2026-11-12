@@ -2,7 +2,7 @@
 
 The model plays each game through a Python tool. One RTX PRO 6000 serves 28 games at a time for nine hours; the harness keeps every game in a persistent session on the server and shares the 28 lanes between the 110 games.
 
-- The write-up: [docs/writeup.md](docs/writeup.md)
+- The write-up: [docs/writeup.md](docs/writeup.md), posted [on Kaggle](https://www.kaggle.com/competitions/arc-prize-2026-arc-agi-3/writeups/public-lb-4th)
 - The engine: [../vllm/](../vllm/)
 
 ## Layout
